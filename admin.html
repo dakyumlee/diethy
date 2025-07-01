@@ -5,12 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>관리자 | 현숙이 일지</title>
   <style>
-    @font-face {
-    font-family: 'SBAggroB';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroB.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-}
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
     
     * {
       margin: 0;
@@ -19,7 +14,7 @@
     }
 
     body {
-      font-family: 'SBAggroB';
+      font-family: 'Noto Sans KR', sans-serif;
       background: #f8fafc;
       color: #1e293b;
       padding: 20px;
@@ -78,7 +73,7 @@
       border: 1px solid #d1d5db;
       border-radius: 6px;
       font-size: 0.9rem;
-      font-family: 'SBAggroB';
+      font-family: 'Noto Sans KR', sans-serif;
       background: white;
     }
 
@@ -119,7 +114,7 @@
       font-weight: 500;
       cursor: pointer;
       transition: background-color 0.2s ease;
-      font-family: 'SBAggroB';
+      font-family: 'Noto Sans KR', sans-serif;
     }
 
     button:hover {
@@ -525,16 +520,22 @@
       logList.innerHTML = "";
       const search = document.getElementById("searchInput").value.toLowerCase();
       const sort = document.getElementById("sortSelect").value;
-      const filterEmoji = document.querySelector('#emojiFilter .active').dataset.emoji;
+      const filterEmoji = document.querySelector('#emojiFilter .active')?.dataset.emoji || "all";
 
-      let filtered = logs.filter(log =>
-        log.memo.toLowerCase().includes(search) ||
-        log.diet.toLowerCase().includes(search) ||
-        log.exercise.toLowerCase().includes(search)
-      );
+      let filtered = logs.filter(log => {
+        const memo = log.memo || "";
+        const diet = log.diet || "";
+        const exercise = log.exercise || "";
+        return memo.toLowerCase().includes(search) ||
+               diet.toLowerCase().includes(search) ||
+               exercise.toLowerCase().includes(search);
+      });
 
       if (filterEmoji !== "all") {
-        filtered = filtered.filter(log => log.mood.includes(filterEmoji));
+        filtered = filtered.filter(log => {
+          const mood = log.mood || "";
+          return mood.includes(filterEmoji);
+        });
       }
 
       filtered.sort((a, b) => {
@@ -542,18 +543,28 @@
         if (sort === "date-asc") return a.date - b.date;
         if (sort === "weight-desc") return b.weight - a.weight;
         if (sort === "weight-asc") return a.weight - b.weight;
+        return 0;
       });
+
+      if (filtered.length === 0) {
+        logList.innerHTML = `
+          <li style="text-align: center; padding: 40px; color: #6b7280;">
+            검색 결과가 없습니다.
+          </li>
+        `;
+        return;
+      }
 
       filtered.forEach(log => {
         const li = document.createElement("li");
         li.innerHTML = `
           <div>
             📅 ${log.date.toLocaleDateString()} |
-            ⚖️ ${log.weight}kg |
-            🍱 ${log.diet} |
-            🏃‍♀️ ${log.exercise} |
-            😶 ${log.mood} |
-            💬 ${log.memo}
+            ⚖️ ${log.weight || 0}kg |
+            🍱 ${log.diet || "기록없음"} |
+            🏃‍♀️ ${log.exercise || "기록없음"} |
+            😊 ${log.mood || "😐"} |
+            💬 ${log.memo || "기록없음"}
           </div>
           <div>
             <button data-id="${log.id}" class="edit">수정</button>
@@ -565,38 +576,86 @@
 
       document.querySelectorAll(".delete").forEach(btn => {
         btn.onclick = async () => {
-          await deleteDoc(doc(db, "dailyLogs", btn.dataset.id));
-          loadLogs();
+          if (!confirm("정말 삭제하시겠습니까?")) return;
+          
+          try {
+            await deleteDoc(doc(db, "dailyLogs", btn.dataset.id));
+            alert("✅ 삭제되었습니다!");
+            loadLogs();
+          } catch (error) {
+            console.error("삭제 실패:", error);
+            alert("❌ 삭제에 실패했습니다.");
+          }
         };
       });
 
       document.querySelectorAll(".edit").forEach(btn => {
         btn.onclick = () => {
           const log = logs.find(l => l.id === btn.dataset.id);
+          if (!log) return;
+
           document.getElementById("dateInput").value = log.date.toISOString().substring(0,10);
-          document.getElementById("weightInput").value = log.weight;
-          document.getElementById("dietInput").value = log.diet;
-          document.getElementById("exerciseInput").value = log.exercise;
-          document.getElementById("moodInput").value = log.mood;
-          document.getElementById("memoInput").value = log.memo;
-          document.getElementById("addLogBtn").textContent = "수정완료";
-          document.getElementById("addLogBtn").onclick = async () => {
+          document.getElementById("weightInput").value = log.weight || "";
+          document.getElementById("dietInput").value = log.diet || "";
+          document.getElementById("exerciseInput").value = log.exercise || "";
+          document.getElementById("moodInput").value = log.mood || "";
+          document.getElementById("memoInput").value = log.memo || "";
+          
+          const addLogBtn = document.getElementById("addLogBtn");
+          addLogBtn.textContent = "수정완료";
+          addLogBtn.onclick = async () => {
             const updated = getInputValues();
-            await updateDoc(doc(db, "dailyLogs", btn.dataset.id), {
-              ...updated,
-              date: Timestamp.fromDate(new Date(updated.date))
-            });
-            resetForm();
-            loadLogs();
-          }
+            if (!updated.date || !updated.weight) {
+              alert("날짜와 몸무게는 필수입니다!");
+              return;
+            }
+
+            try {
+              await updateDoc(doc(db, "dailyLogs", btn.dataset.id), {
+                date: Timestamp.fromDate(new Date(updated.date)),
+                weight: updated.weight,
+                diet: updated.diet || "기록없음",
+                exercise: updated.exercise || "기록없음",
+                mood: updated.mood || "😐",
+                memo: updated.memo || "기록없음"
+              });
+              
+              alert("✅ 수정되었습니다!");
+              resetForm();
+              loadLogs();
+            } catch (error) {
+              console.error("수정 실패:", error);
+              alert("❌ 수정에 실패했습니다.");
+            }
+          };
+
+          document.querySelector(".admin-form").scrollIntoView({ behavior: 'smooth' });
         };
       });
     };
 
     const loadLogs = async () => {
-      const snapshot = await getDocs(colRef);
-      logs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), date: doc.data().date.toDate() }));
-      renderLogs();
+      try {
+        const snapshot = await getDocs(colRef);
+        logs = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return { 
+            id: doc.id, 
+            ...data, 
+            date: data.date?.toDate ? data.date.toDate() : new Date(data.date),
+            weight: data.weight || 0,
+            diet: data.diet || data.message || "기록없음",
+            exercise: data.exercise || "기록없음",
+            mood: data.mood || "😐",
+            memo: data.memo || data.message || "기록없음"
+          };
+        });
+        console.log("로그 로드됨:", logs.length, "개");
+        renderLogs();
+      } catch (error) {
+        console.error("로그 로딩 실패:", error);
+        alert("❌ 데이터를 불러오는데 실패했습니다: " + error.message);
+      }
     };
 
     const resetForm = () => {
@@ -607,12 +666,34 @@
 
     const addLog = async () => {
       const { date, weight, diet, exercise, mood, memo } = getInputValues();
-      if (!date || weight < 20 || weight > 300) return alert("입력값 오류 또는 비정상 몸무게");
-      await addDoc(colRef, {
-        date: Timestamp.fromDate(new Date(date)), weight, diet, exercise, mood, memo
-      });
-      resetForm();
-      loadLogs();
+      
+      if (!date) {
+        alert("날짜를 입력해주세요!");
+        return;
+      }
+      
+      if (!weight || weight < 20 || weight > 300) {
+        alert("올바른 몸무게를 입력해주세요! (20-300kg)");
+        return;
+      }
+
+      try {
+        await addDoc(colRef, {
+          date: Timestamp.fromDate(new Date(date)), 
+          weight: weight,
+          diet: diet || "기록없음",
+          exercise: exercise || "기록없음", 
+          mood: mood || "😐",
+          memo: memo || "기록없음"
+        });
+        
+        alert("✅ 저장되었습니다!");
+        resetForm();
+        loadLogs();
+      } catch (error) {
+        console.error("저장 실패:", error);
+        alert("❌ 저장에 실패했습니다: " + error.message);
+      }
     };
 
     document.getElementById("addLogBtn").onclick = addLog;
@@ -656,10 +737,10 @@
     saveDiaryBtn.onclick = async () => {
       const date = diaryDateInput.value;
       const weight = parseFloat(diaryWeightInput.value);
-      const diet = diaryDietInput.value;
-      const exercise = diaryExerciseInput.value;
+      const diet = diaryDietInput.value.trim();
+      const exercise = diaryExerciseInput.value.trim();
       const mood = diaryMoodInput.value;
-      const memo = diaryMemoInput.value;
+      const memo = diaryMemoInput.value.trim();
 
       if (!date) {
         alert("날짜를 선택해주세요!");
@@ -671,7 +752,7 @@
         return;
       }
 
-      if (!diet.trim()) {
+      if (!diet) {
         alert("오늘 먹은 것을 입력해주세요!");
         return;
       }
@@ -684,10 +765,10 @@
         await addDoc(colRef, {
           date: Timestamp.fromDate(new Date(date)),
           weight: weight,
-          diet: diet.trim(),
-          exercise: exercise.trim() || "운동 안함",
+          diet: diet || "기록없음",
+          exercise: exercise || "운동 안함",
           mood: mood || "😐",
-          memo: memo.trim() || "특별한 일 없음"
+          memo: memo || "특별한 일 없음"
         });
 
         alert("✅ 일지가 성공적으로 저장되었습니다!");
@@ -702,7 +783,7 @@
 
       } catch (error) {
         console.error("일지 저장 실패:", error);
-        alert("❌ 저장에 실패했습니다. 다시 시도해주세요.");
+        alert("❌ 저장에 실패했습니다: " + error.message);
       } finally {
         btnText.innerHTML = "💾 일지 저장하기";
         saveDiaryBtn.disabled = false;
