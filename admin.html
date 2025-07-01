@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>관리자 | 현숙이 일지</title>
   <style>
-   @font-face {
+    @font-face {
     font-family: 'SBAggroB';
     src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroB.woff') format('woff');
     font-weight: normal;
@@ -126,6 +126,138 @@
       background: #2563eb;
     }
 
+    .diary-section {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e2e8f0;
+    }
+
+    .diary-section h3 {
+      color: #0f172a;
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .diary-form {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .diary-row {
+      margin-bottom: 20px;
+    }
+
+    .diary-row label {
+      display: block;
+      margin-bottom: 8px;
+      color: #374151;
+      font-weight: 500;
+      font-size: 1rem;
+    }
+
+    .diary-row input[type="date"],
+    .diary-row input[type="number"],
+    .diary-row textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: 'Noto Sans KR', sans-serif;
+      background: #f9fafb;
+      transition: all 0.2s ease;
+    }
+
+    .diary-row input:focus,
+    .diary-row textarea:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      background: white;
+    }
+
+    .diary-row textarea {
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.5;
+    }
+
+    .weight-input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .weight-input-group input {
+      flex: 1;
+    }
+
+    .weight-input-group span {
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .mood-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .mood-btn {
+      padding: 10px 12px;
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-family: 'Noto Sans KR', sans-serif;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .mood-btn:hover {
+      background: #e5e7eb;
+      border-color: #9ca3af;
+    }
+
+    .mood-btn.active {
+      background: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+    }
+
+    .diary-save-btn {
+      width: 100%;
+      padding: 16px;
+      background: #059669;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Noto Sans KR', sans-serif;
+      margin-top: 8px;
+    }
+
+    .diary-save-btn:hover {
+      background: #047857;
+      transform: translateY(-1px);
+    }
+
+    .diary-save-btn:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     .admin-form {
       background: white;
       border-radius: 12px;
@@ -137,7 +269,7 @@
 
     .admin-form h3 {
       color: #0f172a;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: 600;
       margin-bottom: 16px;
     }
@@ -155,7 +287,7 @@
       border: 1px solid #d1d5db;
       border-radius: 6px;
       font-size: 0.9rem;
-      font-family: 'SBAggroB';
+      font-family: 'Noto Sans KR', sans-serif;
     }
 
     .admin-form input:focus {
@@ -241,6 +373,20 @@
       background: #dc2626;
     }
 
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
     @media (max-width: 768px) {
       .controls {
         flex-direction: column;
@@ -287,8 +433,58 @@
       </div>
     </header>
 
+    <section class="diary-section">
+      <h3>📖 오늘의 일지 작성하기</h3>
+      <div class="diary-form">
+        <div class="diary-row">
+          <label>📅 날짜</label>
+          <input type="date" id="diaryDateInput">
+        </div>
+        
+        <div class="diary-row">
+          <label>⚖️ 몸무게</label>
+          <div class="weight-input-group">
+            <input type="number" id="diaryWeightInput" placeholder="62.5" step="0.1" min="20" max="300">
+            <span>kg</span>
+          </div>
+        </div>
+        
+        <div class="diary-row">
+          <label>🍱 오늘 먹은 것</label>
+          <textarea id="diaryDietInput" placeholder="아침: 샐러드, 점심: 닭가슴살, 저녁: 현미밥..."></textarea>
+        </div>
+        
+        <div class="diary-row">
+          <label>🏃‍♀️ 오늘 한 운동</label>
+          <textarea id="diaryExerciseInput" placeholder="30분 조깅, 20분 요가, 스쿼트 50개..."></textarea>
+        </div>
+        
+        <div class="diary-row">
+          <label>😊 오늘의 기분</label>
+          <div class="mood-selector">
+            <button type="button" class="mood-btn" data-mood="😊">😊 좋음</button>
+            <button type="button" class="mood-btn" data-mood="😐">😐 보통</button>
+            <button type="button" class="mood-btn" data-mood="😢">😢 우울</button>
+            <button type="button" class="mood-btn" data-mood="😡">😡 화남</button>
+            <button type="button" class="mood-btn" data-mood="🤗">🤗 행복</button>
+            <button type="button" class="mood-btn" data-mood="😴">😴 피곤</button>
+          </div>
+          <input type="hidden" id="diaryMoodInput">
+        </div>
+        
+        <div class="diary-row">
+          <label>💭 오늘의 일기</label>
+          <textarea id="diaryMemoInput" placeholder="오늘 하루는 어땠나요? 느꼈던 점이나 내일의 다짐을 자유롭게 적어보세요..." rows="4"></textarea>
+        </div>
+        
+        <button id="saveDiaryBtn" class="diary-save-btn">
+          <span class="btn-text">💾 일지 저장하기</span>
+        </button>
+      </div>
+    </section>
+
     <section class="admin-form">
-      <h3>해당 기록 작성</h3>
+      <h3>⚙️ 빠른 데이터 입력 (관리자용)</h3>
       <div class="form-grid">
         <input type="date" id="dateInput">
         <input type="number" id="weightInput" placeholder="몸무게" step="0.1">
@@ -438,6 +634,80 @@
     if (localStorage.getItem("darkmode") === "on") {
       document.body.classList.add("dark");
     }
+
+    const diaryDateInput = document.getElementById("diaryDateInput");
+    const diaryWeightInput = document.getElementById("diaryWeightInput");
+    const diaryDietInput = document.getElementById("diaryDietInput");
+    const diaryExerciseInput = document.getElementById("diaryExerciseInput");
+    const diaryMoodInput = document.getElementById("diaryMoodInput");
+    const diaryMemoInput = document.getElementById("diaryMemoInput");
+    const saveDiaryBtn = document.getElementById("saveDiaryBtn");
+
+    diaryDateInput.value = new Date().toISOString().slice(0, 10);
+
+    document.querySelectorAll(".mood-btn").forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll(".mood-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        diaryMoodInput.value = btn.dataset.mood;
+      };
+    });
+
+    saveDiaryBtn.onclick = async () => {
+      const date = diaryDateInput.value;
+      const weight = parseFloat(diaryWeightInput.value);
+      const diet = diaryDietInput.value;
+      const exercise = diaryExerciseInput.value;
+      const mood = diaryMoodInput.value;
+      const memo = diaryMemoInput.value;
+
+      if (!date) {
+        alert("날짜를 선택해주세요!");
+        return;
+      }
+
+      if (!weight || weight < 20 || weight > 300) {
+        alert("올바른 몸무게를 입력해주세요! (20-300kg)");
+        return;
+      }
+
+      if (!diet.trim()) {
+        alert("오늘 먹은 것을 입력해주세요!");
+        return;
+      }
+
+      const btnText = saveDiaryBtn.querySelector('.btn-text');
+      btnText.innerHTML = '<div class="loading"></div> 저장 중...';
+      saveDiaryBtn.disabled = true;
+
+      try {
+        await addDoc(colRef, {
+          date: Timestamp.fromDate(new Date(date)),
+          weight: weight,
+          diet: diet.trim(),
+          exercise: exercise.trim() || "운동 안함",
+          mood: mood || "😐",
+          memo: memo.trim() || "특별한 일 없음"
+        });
+
+        alert("✅ 일지가 성공적으로 저장되었습니다!");
+        
+        diaryDietInput.value = "";
+        diaryExerciseInput.value = "";
+        diaryMemoInput.value = "";
+        diaryMoodInput.value = "";
+        document.querySelectorAll(".mood-btn").forEach(b => b.classList.remove("active"));
+
+        loadLogs();
+
+      } catch (error) {
+        console.error("일지 저장 실패:", error);
+        alert("❌ 저장에 실패했습니다. 다시 시도해주세요.");
+      } finally {
+        btnText.innerHTML = "💾 일지 저장하기";
+        saveDiaryBtn.disabled = false;
+      }
+    };
 
     loadLogs();
   </script>
