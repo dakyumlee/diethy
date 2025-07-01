@@ -1,0 +1,117 @@
+@font-face {
+    font-family: 'SBAggroB';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroB.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'SBAggroB';
+    background: #fdf7f2;
+    color: #333;
+    text-align: center;
+    padding: 2rem;
+}
+
+a {
+    text-decoration: none;
+    color:#333
+}
+.container {
+    max-width: 500px;
+    margin: auto;
+    border: 2px solid #f4c2c2;
+    border-radius: 1rem;
+    padding: 2rem;
+    background: white;
+}
+input {
+    margin: 0.5rem;
+    padding: 0.5rem;
+}
+button {
+    font-family: 'SBAggroB';
+    background-color: #f48fb1;
+    color: white;
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+.nav-links {
+    margin-top: 2rem;
+}
+.nav-links a {
+    display: inline-block;
+    margin: 0 1rem;
+    text-decoration: none;
+    color: #f06292;
+    font-weight: bold;
+}
+#quoteBox {
+    margin-top: 2rem;
+    font-style: italic;
+    color: #666;
+}
+
+body {
+    font-family: 'SBAggroB';
+    background: #f9f9f9;
+    color: #333;
+    padding: 1rem;
+    transition: background 0.3s, color 0.3s;
+}
+body.dark {
+    background: #222;
+    color: #eee;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    margin: 0.25rem;
+    cursor: pointer;
+    border: none;
+    background: #f48fb1;
+    color: white;
+    border-radius: 6px;
+    transition: background 0.3s;
+}
+button:hover {
+    background: #ec407a;
+}
+
+#alertModal {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    z-index: 9999;
+    max-width: 90%;
+    text-align: center;
+    animation: fadeIn 0.3s ease;
+}
+body.dark #alertModal {
+    background: #333;
+    color: #fff;
+    border: 1px solid #999;
+}
+
+#alertModal p {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+#alertModal button {
+     background: #4caf50;
+}
+#alertModal button:hover {
+     background: #388e3c;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -40%); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
+}

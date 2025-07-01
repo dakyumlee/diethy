@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>관리자 로그인</title>
+  <style>
+    body { font-family:'SBAggroB'; text-align: center; padding: 50px; }
+    input, button { padding: 10px; margin: 10px; width: 250px; }
+  </style>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <h2>🔐 관리자 로그인</h2>
+  <input type="email" id="email" placeholder="이메일" style="font-family: 'SBAggroB';"/><br />
+  <input type="password" id="password" placeholder="비밀번호"  style="font-family: 'SBAggroB';" /><br />
+  <button id="loginBtn">로그인</button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBjB7wPQvynFxpHQcjOnY2TyURM-ceKmGo",
+      authDomain: "hsdiet-54647.firebaseapp.com",
+      projectId: "hsdiet-54647",
+      storageBucket: "hsdiet-54647.appspot.com",
+      messagingSenderId: "559448029366",
+      appId: "1:559448029366:web:d19b13ba83a5f3e537ce17",
+      measurementId: "G-PCKG5NPT4V"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.getElementById("loginBtn").addEventListener("click", () => {
+      const email = document.getElementById("email").value;
+      const pw = document.getElementById("password").value;
+
+      signInWithEmailAndPassword(auth, email, pw)
+        .then(() => {
+          window.location.href = "admin.html";
+        })
+        .catch(err => {
+          alert("로그인 실패: " + err.message);
+        });
+    });
+  </script>
+</body>
+</html>

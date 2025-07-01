@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관리자 | 현숙이 일지</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>현숙이의 다이어트 관리자</h1>
+    <div class="controls">
+      <input type="text" id="searchInput" placeholder="검색">
+      <select id="sortSelect">
+        <option value="date-desc">날짜 내림차순</option>
+        <option value="date-asc">날짜 오름차순</option>
+        <option value="weight-desc">몸무게 내림차순</option>
+        <option value="weight-asc">몸무게 오름차순</option>
+      </select>
+      <div id="emojiFilter">
+        <button data-emoji="😄">😄</button>
+        <button data-emoji="😢">😢</button>
+        <button data-emoji="😡">😡</button>
+        <button data-emoji="all" class="active">모두</button>
+      </div>
+      <button id="darkToggle">다크모드</button>
+      <button id="downloadPDF">PDF</button>
+      <button id="downloadCSV">CSV</button>
+      <button id="restoreCSV">복원</button>
+    </div>
+  </header>
+
+  <section class="admin-form">
+    <h3>해당 기록 작성</h3>
+    <input type="date" id="dateInput">
+    <input type="number" id="weightInput" placeholder="몸무게">
+    <input type="text" id="dietInput" placeholder="식단">
+    <input type="text" id="exerciseInput" placeholder="운동">
+    <input type="text" id="moodInput" placeholder="기분">
+    <input type="text" id="memoInput" placeholder="오늘의 한 줄 일기">
+    <button id="addLogBtn">저장</button>
+  </section>
+
+  <section class="admin-logs">
+    <h3>전체 기록</h3>
+    <ul id="logList"></ul>
+  </section>
+
+  <script type="module" src="js/admin.js"></script>
+  <script type="module" src="js/ui.js"></script>
+</body>
+</html>
