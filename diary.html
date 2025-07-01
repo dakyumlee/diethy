@@ -3,12 +3,316 @@
 <head>
   <meta charset="UTF-8">
   <title>현숙이 일지 보기</title>
-  <link rel="stylesheet" href="css/style.css">
+  <style>
+    @font-face {
+    font-family: 'SBAggroB';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroB.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'SBAggroB';
+      background: #f8fafc;
+      color: #1e293b;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #0f172a;
+      margin-bottom: 32px;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .nav-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .nav-header a {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #3b82f6;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background-color 0.2s ease;
+      margin: 0 8px;
+    }
+
+    .nav-header a:hover {
+      background: #2563eb;
+    }
+
+    .nav-header a.secondary {
+      background: #6b7280;
+    }
+
+    .nav-header a.secondary:hover {
+      background: #4b5563;
+    }
+
+    #diaryList {
+      list-style: none;
+    }
+
+    #diaryList li {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s ease;
+    }
+
+    #diaryList li:hover {
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .diary-entry {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .diary-entry:last-child {
+      margin-bottom: 0;
+    }
+
+    .diary-icon {
+      font-size: 1.2rem;
+      width: 24px;
+      margin-top: 2px;
+    }
+
+    .diary-content {
+      color: #374151;
+      font-size: 0.95rem;
+      font-weight: 500;
+      word-break: break-word;
+    }
+
+    .diary-date {
+      color: #6b7280;
+      font-weight: 600;
+    }
+
+    .diary-weight {
+      color: #059669;
+      font-weight: 600;
+    }
+
+    .diary-diet {
+      color: #dc2626;
+    }
+
+    .diary-exercise {
+      color: #7c3aed;
+    }
+
+    .diary-mood {
+      font-size: 1.1rem;
+    }
+
+    .diary-memo {
+      color: #374151;
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: #6b7280;
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .empty-state h3 {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      color: #9ca3af;
+    }
+
+    .loading-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: #6b7280;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 32px;
+      height: 32px;
+      border: 3px solid #e5e7eb;
+      border-radius: 50%;
+      border-top-color: #3b82f6;
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 16px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 0 10px;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      .nav-header a {
+        margin: 4px;
+        padding: 8px 16px;
+        font-size: 0.9rem;
+      }
+
+      #diaryList li {
+        padding: 16px;
+      }
+
+      .diary-entry {
+        grid-template-columns: auto 1fr;
+        gap: 8px;
+      }
+
+      .diary-icon {
+        font-size: 1rem;
+      }
+
+      .diary-content {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>📖 현숙이의 다이어트 일지</h1>
-  <ul id="diaryList"></ul>
+  <div class="container">
+    <h1>📖 현숙이의 다이어트 일지</h1>
+    
+    <div class="nav-header">
+      <a href="index.html">← 메인으로</a>
+      <a href="stats.html" class="secondary">📊 통계 보기</a>
+      <a href="login.html" class="secondary">✏️ 일지 작성하기</a>
+    </div>
 
-  <script type="module" src="js/diary.js"></script>
+    <div id="loadingState" class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>일지를 불러오는 중...</p>
+    </div>
+
+    <ul id="diaryList" style="display: none;"></ul>
+    
+    <div id="emptyState" class="empty-state" style="display: none;">
+      <h3>📝 아직 작성된 일지가 없어요</h3>
+      <p>관리자 페이지에서 일지를 작성해보세요!</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { db } from './js/firebase.js';
+    import {
+      collection, getDocs, query, orderBy
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+    const diaryList = document.getElementById("diaryList");
+    const emptyState = document.getElementById("emptyState");
+    const loadingState = document.getElementById("loadingState");
+
+    async function loadDiary() {
+      try {
+        loadingState.style.display = "block";
+        diaryList.style.display = "none";
+        emptyState.style.display = "none";
+
+        const q = query(collection(db, "dailyLogs"), orderBy("date", "desc"));
+        const snapshot = await getDocs(q);
+        
+        loadingState.style.display = "none";
+
+        if (snapshot.empty) {
+          emptyState.style.display = "block";
+          return;
+        }
+
+        diaryList.style.display = "block";
+        diaryList.innerHTML = "";
+        
+        snapshot.forEach((doc) => {
+          const d = doc.data();
+          const li = document.createElement("li");
+          
+          const date = d.date?.toDate() ? d.date.toDate().toLocaleDateString() : "날짜없음";
+          const weight = d.weight || "-";
+          const diet = d.diet || d.message || "-";
+          const exercise = d.exercise || "-";
+          const mood = d.mood || "😶";
+          const memo = d.memo || d.message || "-";
+          
+          li.innerHTML = `
+            <div class="diary-entry">
+              <div class="diary-icon">📅</div>
+              <div class="diary-content diary-date">${date}</div>
+            </div>
+            <div class="diary-entry">
+              <div class="diary-icon">⚖️</div>
+              <div class="diary-content diary-weight">${weight}kg</div>
+            </div>
+            <div class="diary-entry">
+              <div class="diary-icon">🍱</div>
+              <div class="diary-content diary-diet">${diet}</div>
+            </div>
+            <div class="diary-entry">
+              <div class="diary-icon">🏃‍♀️</div>
+              <div class="diary-content diary-exercise">${exercise}</div>
+            </div>
+            <div class="diary-entry">
+              <div class="diary-icon">😊</div>
+              <div class="diary-content diary-mood">${mood}</div>
+            </div>
+            <div class="diary-entry">
+              <div class="diary-icon">💬</div>
+              <div class="diary-content diary-memo">${memo}</div>
+            </div>
+          `;
+          
+          diaryList.appendChild(li);
+        });
+      } catch (error) {
+        console.error("일지 로딩 실패:", error);
+        loadingState.style.display = "none";
+        emptyState.innerHTML = `
+          <h3>❌ 일지를 불러오는데 실패했습니다</h3>
+          <p>페이지를 새로고침해보세요.</p>
+        `;
+        emptyState.style.display = "block";
+      }
+    }
+
+    loadDiary();
+  </script>
 </body>
 </html>

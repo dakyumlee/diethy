@@ -4,29 +4,340 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>현숙이의 다이어트 일지</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    @font-face {
+    font-family: 'SBAggroB';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroB.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'SBAggroB';
+      background: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #1e293b;
+    }
+
+    .container {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      max-width: 500px;
+      width: 100%;
+      border: 1px solid #e2e8f0;
+    }
+
+    h1 {
+      text-align: center;
+      color: #0f172a;
+      margin-bottom: 32px;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    h1 a {
+      text-decoration: none;
+      color: inherit;
+      transition: color 0.2s ease;
+    }
+
+    h1 a:hover {
+      color: #3b82f6;
+    }
+
+    .today-box {
+      background: #f1f5f9;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .today-box p {
+      color: #334155;
+      font-size: 1rem;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+    }
+
+    input[type="number"], input[type="text"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: white;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      font-family: 'SBAggroB';
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    input::placeholder {
+      color: #9ca3af;
+    }
+
+    .weight-input {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .weight-input input {
+      flex: 1;
+    }
+
+    .weight-input span {
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      font-family: 'SBAggroB';
+    }
+
+    button:hover {
+      background: #2563eb;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .nav-links {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .nav-links a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #374151;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      background: #f9fafb;
+      border-color: #3b82f6;
+      color: #3b82f6;
+    }
+
+    #quoteBox {
+      margin-top: 24px;
+      padding: 16px;
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      border-radius: 8px;
+      font-style: italic;
+      color: #92400e;
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 24px 20px;
+        margin: 10px;
+      }
+
+      h1 {
+        font-size: 1.75rem;
+      }
+
+      .today-box {
+        padding: 20px;
+      }
+
+      .nav-links {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+    }
+
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .success-message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #10b981;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+    }
+
+    .success-message.show {
+      transform: translateX(0);
+    }
+  </style>
 </head>
 <body>
   <div class="container">
     <h1><a href="login.html">📖 현숙이의 다이어트 일지</a></h1>
+    
     <div class="today-box">
-      <p>오늘의 몸무게는 몇 kg이었어?</p>
-      <input type="number" id="weight" placeholder="예: 62.3" /> kg
-      <br />
-      <p>한 줄 다짐</p>
-      <input type="text" id="message" placeholder="예: 오늘은 야식 안 먹기!" />
-      <br />
-      <button id="saveBtn">기록 저장</button>
+      <p>💝 오늘의 몸무게는 몇 kg이었어?</p>
+      <div class="input-group">
+        <div class="weight-input">
+          <input type="number" id="weight" placeholder="예: 62.3" step="0.1" />
+          <span>kg</span>
+        </div>
+      </div>
+      
+      <p>✨ 한 줄 다짐</p>
+      <div class="input-group">
+        <input type="text" id="message" placeholder="예: 오늘은 야식 안 먹기! 💪" />
+      </div>
+      
+      <button id="saveBtn">
+        <span class="btn-text">💾 기록 저장하기</span>
+      </button>
     </div>
 
     <div class="nav-links">
-      <a href="diary.html">✏️ 일지 쓰러가기</a>
-      <a href="stats.html">📈 통계 보기</a>
+      <a href="diary.html">✏️ 일지 보러가기</a>
+      <a href="stats.html">📊 통계 확인하기</a>
     </div>
 
-    <div id="quoteBox"></div>
+    <div id="quoteBox">
+      🌟 작은 변화가 큰 결과를 만듭니다 🌟
+    </div>
   </div>
 
-  <script type="module" src="js/main.js"></script>
+  <script>
+    function saveToFirebase(weight, message) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          console.log('저장된 데이터:', { weight, message, date: new Date() });
+          resolve();
+        }, 1000);
+      });
+    }
+
+    function showSuccessMessage(message) {
+      const successDiv = document.createElement('div');
+      successDiv.className = 'success-message';
+      successDiv.textContent = message;
+      document.body.appendChild(successDiv);
+      
+      setTimeout(() => successDiv.classList.add('show'), 100);
+      setTimeout(() => {
+        successDiv.classList.remove('show');
+        setTimeout(() => document.body.removeChild(successDiv), 300);
+      }, 3000);
+    }
+
+    document.getElementById("saveBtn").addEventListener("click", async () => {
+      const weight = document.getElementById("weight").value;
+      const message = document.getElementById("message").value;
+      const saveBtn = document.getElementById("saveBtn");
+      const btnText = saveBtn.querySelector('.btn-text');
+
+      if (!weight || !message) {
+        alert("⚠️ 입력하지 않은 항목이 있어요!");
+        return;
+      }
+
+      if (weight < 20 || weight > 200) {
+        alert("⚠️ 올바른 몸무게를 입력해주세요!");
+        return;
+      }
+
+      btnText.innerHTML = '<div class="loading"></div> 저장 중...';
+      saveBtn.disabled = true;
+
+      try {
+        await saveToFirebase(weight, message);
+        showSuccessMessage("✅ 기록이 성공적으로 저장되었습니다!");
+        
+        document.getElementById("weight").value = "";
+        document.getElementById("message").value = "";
+        
+      } catch (error) {
+        console.error("저장 실패:", error);
+        alert("❌ 저장에 실패했습니다. 다시 시도해주세요.");
+      } finally {
+        btnText.innerHTML = "💾 기록 저장하기";
+        saveBtn.disabled = false;
+      }
+    });
+
+    const quotes = [
+      "🌟 작은 변화가 큰 결과를 만듭니다 🌟",
+      "💪 오늘의 나는 어제보다 더 건강해졌어요 💪",
+      "✨ 꾸준함이 가장 큰 힘이에요 ✨",
+      "🎯 목표를 향해 한 걸음씩 나아가요 🎯",
+      "🌈 건강한 하루, 행복한 하루 🌈",
+      "💖 자신을 사랑하는 마음으로 💖"
+    ];
+
+    function updateQuote() {
+      const quoteBox = document.getElementById("quoteBox");
+      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+      quoteBox.textContent = randomQuote;
+    }
+
+    updateQuote();
+    setInterval(updateQuote, 10000);
+  </script>
 </body>
 </html>

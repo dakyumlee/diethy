@@ -4,49 +4,442 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>관리자 | 현숙이 일지</title>
-  <link rel="stylesheet" href="css/style.css">
+  <style>
+   @font-face {
+    font-family: 'SBAggroB';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroB.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'SBAggroB';
+      background: #f8fafc;
+      color: #1e293b;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    body.dark {
+      background: #1e293b;
+      color: #f1f5f9;
+    }
+
+    body.dark .container,
+    body.dark .admin-form,
+    body.dark .admin-logs {
+      background: #334155;
+      border-color: #475569;
+    }
+
+    body.dark input,
+    body.dark select {
+      background: #475569;
+      border-color: #64748b;
+      color: #f1f5f9;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e2e8f0;
+    }
+
+    header h1 {
+      color: #0f172a;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    input[type="text"], select {
+      padding: 8px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-family: 'SBAggroB';
+      background: white;
+    }
+
+    input[type="text"]:focus, select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    #emojiFilter {
+      display: flex;
+      gap: 4px;
+    }
+
+    #emojiFilter button {
+      padding: 6px 12px;
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    #emojiFilter button.active {
+      background: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+    }
+
+    button {
+      padding: 8px 16px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      font-family: 'SBAggroB';
+    }
+
+    button:hover {
+      background: #2563eb;
+    }
+
+    .admin-form {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e2e8f0;
+    }
+
+    .admin-form h3 {
+      color: #0f172a;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .admin-form input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-family: 'SBAggroB';
+    }
+
+    .admin-form input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .admin-form button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .admin-logs {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e2e8f0;
+    }
+
+    .admin-logs h3 {
+      color: #0f172a;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    #logList {
+      list-style: none;
+    }
+
+    #logList li {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      transition: all 0.2s ease;
+    }
+
+    #logList li:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    #logList li > div:first-child {
+      flex: 1;
+      color: #374151;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    #logList li > div:last-child {
+      display: flex;
+      gap: 8px;
+    }
+
+    .edit, .delete {
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      border-radius: 4px;
+    }
+
+    .edit {
+      background: #10b981;
+    }
+
+    .edit:hover {
+      background: #059669;
+    }
+
+    .delete {
+      background: #ef4444;
+    }
+
+    .delete:hover {
+      background: #dc2626;
+    }
+
+    @media (max-width: 768px) {
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      #logList li {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      #logList li > div:last-child {
+        justify-content: flex-end;
+      }
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>현숙이의 다이어트 관리자</h1>
-    <div class="controls">
-      <input type="text" id="searchInput" placeholder="검색">
-      <select id="sortSelect">
-        <option value="date-desc">날짜 내림차순</option>
-        <option value="date-asc">날짜 오름차순</option>
-        <option value="weight-desc">몸무게 내림차순</option>
-        <option value="weight-asc">몸무게 오름차순</option>
-      </select>
-      <div id="emojiFilter">
-        <button data-emoji="😄">😄</button>
-        <button data-emoji="😢">😢</button>
-        <button data-emoji="😡">😡</button>
-        <button data-emoji="all" class="active">모두</button>
+  <div class="container">
+    <header>
+      <h1>현숙이의 다이어트 관리자</h1>
+      <div class="controls">
+        <input type="text" id="searchInput" placeholder="검색">
+        <select id="sortSelect">
+          <option value="date-desc">날짜 내림차순</option>
+          <option value="date-asc">날짜 오름차순</option>
+          <option value="weight-desc">몸무게 내림차순</option>
+          <option value="weight-asc">몸무게 오름차순</option>
+        </select>
+        <div id="emojiFilter">
+          <button data-emoji="😄">😄</button>
+          <button data-emoji="😢">😢</button>
+          <button data-emoji="😡">😡</button>
+          <button data-emoji="all" class="active">모두</button>
+        </div>
+        <button id="darkToggle">다크모드</button>
+        <button id="downloadPDF">PDF</button>
+        <button id="downloadCSV">CSV</button>
+        <button id="restoreCSV">복원</button>
       </div>
-      <button id="darkToggle">다크모드</button>
-      <button id="downloadPDF">PDF</button>
-      <button id="downloadCSV">CSV</button>
-      <button id="restoreCSV">복원</button>
-    </div>
-  </header>
+    </header>
 
-  <section class="admin-form">
-    <h3>해당 기록 작성</h3>
-    <input type="date" id="dateInput">
-    <input type="number" id="weightInput" placeholder="몸무게">
-    <input type="text" id="dietInput" placeholder="식단">
-    <input type="text" id="exerciseInput" placeholder="운동">
-    <input type="text" id="moodInput" placeholder="기분">
-    <input type="text" id="memoInput" placeholder="오늘의 한 줄 일기">
-    <button id="addLogBtn">저장</button>
-  </section>
+    <section class="admin-form">
+      <h3>해당 기록 작성</h3>
+      <div class="form-grid">
+        <input type="date" id="dateInput">
+        <input type="number" id="weightInput" placeholder="몸무게" step="0.1">
+        <input type="text" id="dietInput" placeholder="식단">
+        <input type="text" id="exerciseInput" placeholder="운동">
+        <input type="text" id="moodInput" placeholder="기분">
+        <input type="text" id="memoInput" placeholder="오늘의 한 줄 일기">
+      </div>
+      <button id="addLogBtn">저장</button>
+    </section>
 
-  <section class="admin-logs">
-    <h3>전체 기록</h3>
-    <ul id="logList"></ul>
-  </section>
+    <section class="admin-logs">
+      <h3>전체 기록</h3>
+      <ul id="logList"></ul>
+    </section>
+  </div>
 
-  <script type="module" src="js/admin.js"></script>
-  <script type="module" src="js/ui.js"></script>
+  <script type="module">
+    import { db } from './js/firebase.js';
+    import {
+      collection, addDoc, getDocs, deleteDoc, updateDoc, doc, Timestamp
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+    const logList = document.getElementById("logList");
+    const colRef = collection(db, "dailyLogs");
+    let logs = [];
+
+    const getInputValues = () => ({
+      date: document.getElementById("dateInput").value,
+      weight: parseFloat(document.getElementById("weightInput").value),
+      diet: document.getElementById("dietInput").value,
+      exercise: document.getElementById("exerciseInput").value,
+      mood: document.getElementById("moodInput").value,
+      memo: document.getElementById("memoInput").value
+    });
+
+    const renderLogs = () => {
+      logList.innerHTML = "";
+      const search = document.getElementById("searchInput").value.toLowerCase();
+      const sort = document.getElementById("sortSelect").value;
+      const filterEmoji = document.querySelector('#emojiFilter .active').dataset.emoji;
+
+      let filtered = logs.filter(log =>
+        log.memo.toLowerCase().includes(search) ||
+        log.diet.toLowerCase().includes(search) ||
+        log.exercise.toLowerCase().includes(search)
+      );
+
+      if (filterEmoji !== "all") {
+        filtered = filtered.filter(log => log.mood.includes(filterEmoji));
+      }
+
+      filtered.sort((a, b) => {
+        if (sort === "date-desc") return b.date - a.date;
+        if (sort === "date-asc") return a.date - b.date;
+        if (sort === "weight-desc") return b.weight - a.weight;
+        if (sort === "weight-asc") return a.weight - b.weight;
+      });
+
+      filtered.forEach(log => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <div>
+            📅 ${log.date.toLocaleDateString()} |
+            ⚖️ ${log.weight}kg |
+            🍱 ${log.diet} |
+            🏃‍♀️ ${log.exercise} |
+            😶 ${log.mood} |
+            💬 ${log.memo}
+          </div>
+          <div>
+            <button data-id="${log.id}" class="edit">수정</button>
+            <button data-id="${log.id}" class="delete">삭제</button>
+          </div>
+        `;
+        logList.appendChild(li);
+      });
+
+      document.querySelectorAll(".delete").forEach(btn => {
+        btn.onclick = async () => {
+          await deleteDoc(doc(db, "dailyLogs", btn.dataset.id));
+          loadLogs();
+        };
+      });
+
+      document.querySelectorAll(".edit").forEach(btn => {
+        btn.onclick = () => {
+          const log = logs.find(l => l.id === btn.dataset.id);
+          document.getElementById("dateInput").value = log.date.toISOString().substring(0,10);
+          document.getElementById("weightInput").value = log.weight;
+          document.getElementById("dietInput").value = log.diet;
+          document.getElementById("exerciseInput").value = log.exercise;
+          document.getElementById("moodInput").value = log.mood;
+          document.getElementById("memoInput").value = log.memo;
+          document.getElementById("addLogBtn").textContent = "수정완료";
+          document.getElementById("addLogBtn").onclick = async () => {
+            const updated = getInputValues();
+            await updateDoc(doc(db, "dailyLogs", btn.dataset.id), {
+              ...updated,
+              date: Timestamp.fromDate(new Date(updated.date))
+            });
+            resetForm();
+            loadLogs();
+          }
+        };
+      });
+    };
+
+    const loadLogs = async () => {
+      const snapshot = await getDocs(colRef);
+      logs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), date: doc.data().date.toDate() }));
+      renderLogs();
+    };
+
+    const resetForm = () => {
+      document.getElementById("addLogBtn").textContent = "저장";
+      document.getElementById("addLogBtn").onclick = addLog;
+      document.querySelector(".admin-form").reset();
+    };
+
+    const addLog = async () => {
+      const { date, weight, diet, exercise, mood, memo } = getInputValues();
+      if (!date || weight < 20 || weight > 300) return alert("입력값 오류 또는 비정상 몸무게");
+      await addDoc(colRef, {
+        date: Timestamp.fromDate(new Date(date)), weight, diet, exercise, mood, memo
+      });
+      resetForm();
+      loadLogs();
+    };
+
+    document.getElementById("addLogBtn").onclick = addLog;
+    document.getElementById("searchInput").oninput = renderLogs;
+    document.getElementById("sortSelect").onchange = renderLogs;
+    document.querySelectorAll("#emojiFilter button").forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll("#emojiFilter button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        renderLogs();
+      };
+    });
+
+    document.getElementById("darkToggle").onclick = () => {
+      document.body.classList.toggle("dark");
+      localStorage.setItem("darkmode", document.body.classList.contains("dark") ? "on" : "off");
+    };
+
+    if (localStorage.getItem("darkmode") === "on") {
+      document.body.classList.add("dark");
+    }
+
+    loadLogs();
+  </script>
 </body>
 </html>

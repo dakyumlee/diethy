@@ -2,18 +2,205 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>관리자 로그인</title>
   <style>
-    body { font-family:'SBAggroB'; text-align: center; padding: 50px; }
-    input, button { padding: 10px; margin: 10px; width: 250px; }
+   @font-face {
+    font-family: 'SBAggroB';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroB.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'SBAggroB';
+      background: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #1e293b;
+    }
+
+    .container {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      max-width: 400px;
+      width: 100%;
+      border: 1px solid #e2e8f0;
+      text-align: center;
+    }
+
+    .login-header {
+      margin-bottom: 32px;
+    }
+
+    .login-header h2 {
+      color: #0f172a;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .login-header p {
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      color: #374151;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    input[type="email"], input[type="password"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: white;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      font-family: 'SBAggroB';
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    input::placeholder {
+      color: #9ca3af;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'SBAggroB';
+      margin-top: 8px;
+    }
+
+    button:hover {
+      background: #2563eb;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .nav-link {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .nav-link a {
+      color: #6b7280;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s ease;
+    }
+
+    .nav-link a:hover {
+      color: #3b82f6;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error-message {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 24px 20px;
+        margin: 10px;
+      }
+
+      .login-header h2 {
+        font-size: 1.5rem;
+      }
+    }
   </style>
-  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <h2>🔐 관리자 로그인</h2>
-  <input type="email" id="email" placeholder="이메일" style="font-family: 'SBAggroB';"/><br />
-  <input type="password" id="password" placeholder="비밀번호"  style="font-family: 'SBAggroB';" /><br />
-  <button id="loginBtn">로그인</button>
+  <div class="container">
+    <div class="login-header">
+      <h2>🔐 관리자 로그인</h2>
+      <p>관리자 권한이 필요한 페이지입니다</p>
+    </div>
+
+    <div id="errorMessage" class="error-message"></div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">이메일</label>
+        <input type="email" id="email" placeholder="admin@example.com" required />
+      </div>
+
+      <div class="form-group">
+        <label for="password">비밀번호</label>
+        <input type="password" id="password" placeholder="비밀번호를 입력하세요" required />
+      </div>
+
+      <button type="submit" id="loginBtn">
+        <span class="btn-text">로그인</span>
+      </button>
+    </form>
+
+    <div class="nav-link">
+      <a href="index.html">← 메인 페이지로 돌아가기</a>
+    </div>
+  </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
@@ -32,17 +219,80 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    document.getElementById("loginBtn").addEventListener("click", () => {
-      const email = document.getElementById("email").value;
-      const pw = document.getElementById("password").value;
+    const loginForm = document.getElementById("loginForm");
+    const loginBtn = document.getElementById("loginBtn");
+    const btnText = loginBtn.querySelector(".btn-text");
+    const errorMessage = document.getElementById("errorMessage");
 
-      signInWithEmailAndPassword(auth, email, pw)
-        .then(() => {
-          window.location.href = "admin.html";
-        })
-        .catch(err => {
-          alert("로그인 실패: " + err.message);
-        });
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.style.display = "block";
+      setTimeout(() => {
+        errorMessage.style.display = "none";
+      }, 5000);
+    }
+
+    function setLoading(loading) {
+      if (loading) {
+        btnText.innerHTML = '<div class="loading"></div> 로그인 중...';
+        loginBtn.disabled = true;
+      } else {
+        btnText.innerHTML = '로그인';
+        loginBtn.disabled = false;
+      }
+    }
+
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!email || !password) {
+        showError("이메일과 비밀번호를 모두 입력해주세요.");
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "admin.html";
+      } catch (error) {
+        console.error("로그인 실패:", error);
+        
+        let errorMsg = "로그인에 실패했습니다.";
+        switch (error.code) {
+          case 'auth/user-not-found':
+            errorMsg = "등록되지 않은 이메일입니다.";
+            break;
+          case 'auth/wrong-password':
+            errorMsg = "비밀번호가 올바르지 않습니다.";
+            break;
+          case 'auth/invalid-email':
+            errorMsg = "올바른 이메일 형식이 아닙니다.";
+            break;
+          case 'auth/too-many-requests':
+            errorMsg = "너무 많은 시도가 있었습니다. 잠시 후 다시 시도해주세요.";
+            break;
+        }
+        
+        showError(errorMsg);
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    document.getElementById("email").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        document.getElementById("password").focus();
+      }
+    });
+
+    document.getElementById("password").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        loginForm.dispatchEvent(new Event("submit"));
+      }
     });
   </script>
 </body>
