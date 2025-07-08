@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>현숙이의 다이어트 일지</title>
+  <title>현영이의 피트니스 관리</title>
   <style>
     @font-face {
     font-family: 'SBAggroB';
@@ -12,7 +12,6 @@
     font-style: normal;
 }
 
-    
     * {
       margin: 0;
       padding: 0;
@@ -21,7 +20,7 @@
 
     body {
       font-family: 'SBAggroB';
-      background: #f8fafc;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -31,26 +30,31 @@
     }
 
     .container {
-      background: white;
-      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
       padding: 40px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      max-width: 500px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
       width: 100%;
-      border: 1px solid #e2e8f0;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     h1 {
       text-align: center;
-      color: #0f172a;
+      color: #2d3748;
       margin-bottom: 32px;
-      font-size: 2.2rem;
+      font-size: 2.5rem;
       font-weight: 700;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .welcome-box {
-      background: #f1f5f9;
-      border-radius: 12px;
+      background: linear-gradient(135deg, #f7fafc, #edf2f7);
+      border-radius: 16px;
       padding: 32px 24px;
       margin-bottom: 32px;
       border: 1px solid #e2e8f0;
@@ -58,268 +62,262 @@
     }
 
     .welcome-box h2 {
-      color: #1e293b;
-      font-size: 1.5rem;
+      color: #2d3748;
+      font-size: 1.6rem;
       font-weight: 600;
       margin-bottom: 12px;
     }
 
     .welcome-box > p {
-      color: #64748b;
-      font-size: 1rem;
+      color: #4a5568;
+      font-size: 1.1rem;
       margin-bottom: 32px;
       line-height: 1.6;
     }
 
     .features {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 24px;
       margin-bottom: 16px;
     }
 
     .feature-item {
-      background: white;
-      border-radius: 8px;
-      padding: 20px;
+      background: linear-gradient(135deg, #ffffff, #f7fafc);
+      border-radius: 12px;
+      padding: 24px;
       border: 1px solid #e2e8f0;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
     }
 
     .feature-item:hover {
-      border-color: #3b82f6;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      border-color: #667eea;
     }
 
     .feature-icon {
-      font-size: 2rem;
-      margin-bottom: 12px;
+      font-size: 3rem;
+      margin-bottom: 16px;
+      display: block;
     }
 
     .feature-item h3 {
-      color: #1e293b;
-      font-size: 1.1rem;
+      color: #2d3748;
+      font-size: 1.2rem;
       font-weight: 600;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
 
     .feature-item p {
-      color: #64748b;
-      font-size: 0.9rem;
-      line-height: 1.4;
-    }
-
-    a {
-        text-decoration: none;
-        color:#0f172a
+      color: #4a5568;
+      font-size: 0.95rem;
+      line-height: 1.5;
     }
 
     .nav-links {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 24px;
+      gap: 16px;
+      margin-top: 32px;
     }
 
     .nav-links a {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 16px;
-      background: white;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
+      padding: 18px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 12px;
       text-decoration: none;
-      color: #374151;
-      font-weight: 500;
-      transition: all 0.2s ease;
+      color: white;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      border: none;
     }
 
     .nav-links a:hover {
-      background: #f9fafb;
-      border-color: #3b82f6;
-      color: #3b82f6;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .nav-links a.secondary {
+      background: linear-gradient(135deg, #4a5568, #2d3748);
+    }
+
+    .nav-links a.secondary:hover {
+      box-shadow: 0 10px 25px rgba(74, 85, 104, 0.4);
+    }
+
+    .admin-link {
+      text-align: center;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .admin-link a {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .admin-link a:hover {
+      color: #764ba2;
     }
 
     #quoteBox {
-      margin-top: 24px;
-      padding: 16px;
-      background: #fef3c7;
-      border: 1px solid #fcd34d;
-      border-radius: 8px;
+      margin-top: 32px;
+      padding: 20px;
+      background: linear-gradient(135deg, #fef5e7, #fed7aa);
+      border: 1px solid #f6ad55;
+      border-radius: 12px;
       font-style: italic;
-      color: #92400e;
+      color: #c05621;
       text-align: center;
+      font-size: 1.1rem;
+      font-weight: 500;
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: 640px) {
       .container {
         padding: 24px 20px;
         margin: 10px;
       }
 
       h1 {
-        font-size: 1.75rem;
+        font-size: 2rem;
       }
 
-      .today-box {
-        padding: 20px;
+      .features {
+        grid-template-columns: 1fr;
       }
 
       .nav-links {
         grid-template-columns: 1fr;
-        gap: 8px;
+        gap: 12px;
       }
     }
 
-    .loading {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
+    .stats-preview {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin: 24px 0;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .success-message {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #10b981;
+    .stat-card {
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
-      padding: 12px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      transform: translateX(400px);
-      transition: transform 0.3s ease;
-      z-index: 1000;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
     }
 
-    .success-message.show {
-      transform: translateX(0);
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    @media (max-width: 480px) {
+      .stats-preview {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>📖 현숙이의 다이어트 일지</h1>
+    <h1>💪 현영이의 피트니스 관리</h1>
     
     <div class="welcome-box">
-      <h2>🌟 건강한 다이어트 여정을 시작해보세요!</h2>
-      <p>매일의 기록이 당신의 변화를 만듭니다. 꾸준한 관리로 목표를 달성해보세요.</p>
+      <h2>🏋️‍♀️ 건강한 몸을 만들어가는 여정</h2>
+      <p>체계적인 운동 관리와 신체 변화 추적으로 목표를 달성해보세요!</p>
+      
+      <div class="stats-preview">
+        <div class="stat-card">
+          <div class="stat-number" id="totalWorkouts">-</div>
+          <div class="stat-label">총 운동일</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="currentWeight">-</div>
+          <div class="stat-label">현재 몸무게</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="bodyFatRate">-</div>
+          <div class="stat-label">체지방률</div>
+        </div>
+      </div>
       
       <div class="features">
-        <a href="login.html">
-        <div class="feature-item">
+        <a href="workout-log.html" class="feature-item">
           <div class="feature-icon">📝</div>
-          <h3>일지 작성</h3>
-          <p>매일의 몸무게, 식단, 운동을 기록하세요</p>
-            </a>
-        </div>
+          <h3>운동 기록</h3>
+          <p>매일의 운동, 몸무게, 체성분을 상세하게 기록하세요</p>
+        </a>
         
-        <div class="feature-item">
-            <a href="stats.html">
+        <a href="body-stats.html" class="feature-item">
           <div class="feature-icon">📊</div>
-          <h3>통계 분석</h3>
-          <p>몸무게 변화와 패턴을 차트로 확인하세요</p>
-                </a>
-        </div>
+          <h3>신체 분석</h3>
+          <p>몸무게, 체지방, 근량 변화를 차트로 한눈에 확인하세요</p>
+        </a>
         
-        <div class="feature-item">
-            <a href="diary.html">
+        <a href="workout-history.html" class="feature-item">
           <div class="feature-icon">📖</div>
-          <h3>일지 보기</h3>
-          <p>지금까지의 기록을 한눈에 볼 수 있어요</p>
-          </a>
-        </div>
+          <h3>운동 히스토리</h3>
+          <p>지금까지의 모든 운동 기록을 타임라인으로 확인하세요</p>
+        </a>
+        
+        <a href="goal-tracker.html" class="feature-item">
+          <div class="feature-icon">🎯</div>
+          <h3>목표 관리</h3>
+          <p>운동 목표를 설정하고 달성률을 추적해보세요</p>
+        </a>
       </div>
     </div>
 
     <div class="nav-links">
-      <a href="diary.html" class="primary-btn">📖 일지 보러가기</a>
-      <a href="stats.html" class="secondary-btn">📊 통계 확인하기</a>
+      <a href="workout-history.html">📖 운동 기록 보기</a>
+      <a href="body-stats.html" class="secondary">📊 신체 분석</a>
     </div>
-<br>
+
     <div class="admin-link">
       <a href="login.html">관리자 로그인</a>
     </div>
 
     <div id="quoteBox">
-      🌟 작은 변화가 큰 결과를 만듭니다 🌟
+      💪 강한 몸은 하루아침에 만들어지지 않습니다 💪
     </div>
   </div>
 
   <script>
-    function saveToFirebase(weight, message) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          console.log('저장된 데이터:', { weight, message, date: new Date() });
-          resolve();
-        }, 1000);
-      });
+    function loadStats() {
+      document.getElementById("totalWorkouts").textContent = "42";
+      document.getElementById("currentWeight").textContent = "65.2kg";
+      document.getElementById("bodyFatRate").textContent = "18.5%";
     }
-
-    function showSuccessMessage(message) {
-      const successDiv = document.createElement('div');
-      successDiv.className = 'success-message';
-      successDiv.textContent = message;
-      document.body.appendChild(successDiv);
-      
-      setTimeout(() => successDiv.classList.add('show'), 100);
-      setTimeout(() => {
-        successDiv.classList.remove('show');
-        setTimeout(() => document.body.removeChild(successDiv), 300);
-      }, 3000);
-    }
-
-    document.getElementById("saveBtn").addEventListener("click", async () => {
-      const weight = document.getElementById("weight").value;
-      const message = document.getElementById("message").value;
-      const saveBtn = document.getElementById("saveBtn");
-      const btnText = saveBtn.querySelector('.btn-text');
-
-      if (!weight || !message) {
-        alert("⚠️ 입력하지 않은 항목이 있어요!");
-        return;
-      }
-
-      if (weight < 20 || weight > 200) {
-        alert("⚠️ 올바른 몸무게를 입력해주세요!");
-        return;
-      }
-
-      btnText.innerHTML = '<div class="loading"></div> 저장 중...';
-      saveBtn.disabled = true;
-
-      try {
-        await saveToFirebase(weight, message);
-        showSuccessMessage("✅ 기록이 성공적으로 저장되었습니다!");
-        
-        document.getElementById("weight").value = "";
-        document.getElementById("message").value = "";
-        
-      } catch (error) {
-        console.error("저장 실패:", error);
-        alert("❌ 저장에 실패했습니다. 다시 시도해주세요.");
-      } finally {
-        btnText.innerHTML = "💾 기록 저장하기";
-        saveBtn.disabled = false;
-      }
-    });
 
     const quotes = [
-      "🌟 작은 변화가 큰 결과를 만듭니다 🌟",
-      "💪 오늘의 나는 어제보다 더 건강해졌어요 💪",
-      "✨ 꾸준함이 가장 큰 힘이에요 ✨",
-      "🎯 목표를 향해 한 걸음씩 나아가요 🎯",
-      "🌈 건강한 하루, 행복한 하루 🌈",
-      "💖 자신을 사랑하는 마음으로 💖"
+      "💪 강한 몸은 하루아침에 만들어지지 않습니다 💪",
+      "🏋️‍♀️ 오늘의 운동이 내일의 나를 만듭니다 🏋️‍♀️",
+      "✨ 꾸준함이 가장 강력한 힘입니다 ✨",
+      "🎯 목표를 향해 한 세트씩 나아가세요 🎯",
+      "🔥 운동은 최고의 투자입니다 🔥",
+      "💖 건강한 몸, 건강한 마음 💖",
+      "🌟 한계를 뛰어넘는 순간이 성장입니다 🌟",
+      "⚡ 포기하지 않는 자가 승리합니다 ⚡"
     ];
 
     function updateQuote() {
@@ -328,8 +326,25 @@
       quoteBox.textContent = randomQuote;
     }
 
+    loadStats();
     updateQuote();
-    setInterval(updateQuote, 10000);
+    setInterval(updateQuote, 8000);
+
+    window.addEventListener('load', () => {
+      const featureItems = document.querySelectorAll('.feature-item');
+      featureItems.forEach((item, index) => {
+        setTimeout(() => {
+          item.style.opacity = '0';
+          item.style.transform = 'translateY(20px)';
+          item.style.transition = 'all 0.6s ease';
+          
+          setTimeout(() => {
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+          }, 100);
+        }, index * 150);
+      });
+    });
   </script>
 </body>
 </html>

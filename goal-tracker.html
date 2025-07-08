@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>목표 관리 | 현영이 피트니스</title>
+  <style>
+    @font-face {
+    font-family: 'SBAggroB';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroB.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'SBAggroB';
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: #1e293b;
+      padding: 20px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 32px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      color: white;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 24px;
+    }
+
+    .nav-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .nav-header a {
+      display: inline-block;
+      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-header a:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .goals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+
+    .goal-card {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .goal-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .goal-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .goal-icon {
+      font-size: 3rem;
+      padding: 16px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .goal-info h3 {
+      color: #2d3748;
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .goal-info p {
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+
+    .goal-content {
+      margin-bottom: 24px;
+    }
+
+    .goal-target {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-left: 4px solid #667eea;
+    }
+
+    .goal-target h4 {
+      color: #2d3748;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .target-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+
+    .target-label {
+      color: #4a5568;
+    }
+
+    .target-value {
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    .progress-container {
+      margin-bottom: 20px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .progress-label {
+      font-weight: 600;
+      color: #2d3748;
+      font-size: 0.9rem;
+    }
+
+    .progress-percentage {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #667eea;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      background: #f1f5f9;
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 6px;
+      transition: width 0.3s ease;
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .goal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 12px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'SBAggroB';
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5a67d8;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: #f8fafc;
+      color: #4a5568;
+      border: 1px solid #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .create-goal-section {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+    }
+
+    .create-goal-section h3 {
+      color: #2d3748;
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      text-align: center;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-weight: 500;
+      color: #374151;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 12px 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: 'SBAggroB';
+      background: white;
+      transition: all 0.2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .goal-types {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .goal-type-btn {
+      padding: 16px 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+      font-family: 'SBAggroB';
+    }
+
+    .goal-type-btn:hover {
+      background: #f1f5f9;
+    }
+
+    .goal-type-btn.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+
+    .goal-type-icon {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .achievements-section {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+    }
+
+    .achievements-section h3 {
+      color: #2d3748;
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      text-align: center;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .achievements-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .achievement {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .achievement:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .achievement.completed {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      border-color: #10b981;
+    }
+
+    .achievement-icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      opacity: 0.7;
+    }
+
+    .achievement.completed .achievement-icon {
+      opacity: 1;
+    }
+
+    .achievement-title {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .achievement-description {
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+      background: white;
+      margin: 5% auto;
+      padding: 32px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .modal-title {
+      color: #2d3748;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .close {
+      color: #6b7280;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .close:hover {
+      color: #374151;
+    }
+
+    @media (max-width: 768px) {
+      .goals-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .goal-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .goal-types {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .achievements-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎯 목표 관리</h1>
+      <p>명확한 목표 설정과 체계적인 관리로 피트니스 목표를 달성하세요</p>
+      <div class="nav-header">
+        <a href="index.html">🏠 메인으로</a>
+        <a href="body-stats.html">📊 신체 분석</a>
+        <a href="workout-history.html">📖 운동 기록</a>
+        <a href="login.html">✏️ 기록 작성</a>
+      </div>
+    </header>
+
+    <div class="create-goal-section">
+      <h3>🎯 새로운 목표 설정하기</h3>
+      
+      <div class="goal-types">
+        <div class="goal-type-btn active" data-type="weight">
+          <span class="goal-type-icon">⚖️</span>
+          <div>몸무게</div>
+        </div>
+        <div class="goal-type-btn" data-type="bodyfat">
+          <span class="goal-type-icon">🔥</span>
+          <div>체지방</div>
+        </div>
+        <div class="goal-type-btn" data-type="muscle">
+          <span class="goal-type-icon">💪</span>
+          <div>근량</div>
+        </div>
+        <div class="goal-type-btn" data-type="exercise">
+          <span class="goal-type-icon">🏃‍♀️</span>
+          <div>운동</div>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>목표 이름</label>
+          <input type="text" id="goalName" placeholder="예: 여름까지 5kg 감량">
+        </div>
+        
+        <div class="form-group">
+          <label>목표 기간</label>
+          <select id="goalPeriod">
+            <option value="30">1개월</option>
+            <option value="60">2개월</option>
+            <option value="90">3개월</option>
+            <option value="180">6개월</option>
+            <option value="365">1년</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label id="currentLabel">현재 몸무게</label>
+          <input type="number" id="currentValue" placeholder="65.0" step="0.1">
+        </div>
+        
+        <div class="form-group">
+          <label id="targetLabel">목표 몸무게</label>
+          <input type="number" id="targetValue" placeholder="60.0" step="0.1">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>목표 설명</label>
+        <textarea id="goalDescription" placeholder="목표에 대한 상세한 설명이나 동기를 적어보세요..."></textarea>
+      </div>
+
+      <button class="btn btn-primary" onclick="createGoal()" style="width: 100%; margin-top: 16px;">
+        🎯 목표 생성하기
+      </button>
+    </div>
+
+    <div class="goals-grid" id="goalsContainer">
+    </div>
+
+    <div class="achievements-section">
+      <h3>🏆 성취 배지</h3>
+      <div class="achievements-grid">
+        <div class="achievement" id="firstGoal">
+          <div class="achievement-icon">🎯</div>
+          <div class="achievement-title">첫 목표 설정</div>
+          <div class="achievement-description">첫 번째 목표를 설정했습니다</div>
+        </div>
+        
+        <div class="achievement" id="firstComplete">
+          <div class="achievement-icon">✅</div>
+          <div class="achievement-title">목표 달성자</div>
+          <div class="achievement-description">첫 번째 목표를 달성했습니다</div>
+        </div>
+        
+        <div class="achievement" id="streak7">
+          <div class="achievement-icon">🔥</div>
+          <div class="achievement-title">일주일 연속</div>
+          <div class="achievement-description">7일 연속 운동했습니다</div>
+        </div>
+        
+        <div class="achievement" id="workout50">
+          <div class="achievement-icon">💪</div>
+          <div class="achievement-title">운동 중독자</div>
+          <div class="achievement-description">총 50회 운동을 완료했습니다</div>
+        </div>
+        
+        <div class="achievement" id="weightGoal">
+          <div class="achievement-icon">⚖️</div>
+          <div class="achievement-title">체중 관리자</div>
+          <div class="achievement-description">몸무게 목표를 달성했습니다</div>
+        </div>
+        
+        <div class="achievement" id="bodyfatGoal">
+          <div class="achievement-icon">🔥</div>
+          <div class="achievement-title">체지방 킬러</div>
+          <div class="achievement-description">체지방 목표를 달성했습니다</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="goalModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">목표 상세</div>
+        <span class="close">&times;</span>
+      </div>
+      <div id="modalContent">
+ 
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let goals = JSON.parse(localStorage.getItem('fitnessGoals') || '[]');
+    let workoutLogs = JSON.parse(localStorage.getItem('workoutLogs') || '[]');
+ 
+    const goalTypeLabels = {
+      weight: { current: '현재 몸무게', target: '목표 몸무게', unit: 'kg', icon: '⚖️' },
+      bodyfat: { current: '현재 체지방률', target: '목표 체지방률', unit: '%', icon: '🔥' },
+      muscle: { current: '현재 근량', target: '목표 근량', unit: 'kg', icon: '💪' },
+      exercise: { current: '현재 주간 운동', target: '목표 주간 운동', unit: '회', icon: '🏃‍♀️' }
+    };
+ 
+    document.querySelectorAll('.goal-type-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.goal-type-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const type = btn.dataset.type;
+        const labels = goalTypeLabels[type];
+        
+        document.getElementById('currentLabel').textContent = labels.current;
+        document.getElementById('targetLabel').textContent = labels.target;
+      });
+    });
+ 
+    function createGoal() {
+      const goalType = document.querySelector('.goal-type-btn.active').dataset.type;
+      const goalName = document.getElementById('goalName').value.trim();
+      const goalPeriod = parseInt(document.getElementById('goalPeriod').value);
+      const currentValue = parseFloat(document.getElementById('currentValue').value);
+      const targetValue = parseFloat(document.getElementById('targetValue').value);
+      const goalDescription = document.getElementById('goalDescription').value.trim();
+ 
+      if (!goalName) {
+        alert('목표 이름을 입력해주세요!');
+        return;
+      }
+
+      if (isNaN(currentValue) || isNaN(targetValue)) {
+        alert('현재값과 목표값을 올바르게 입력해주세요!');
+        return;
+      }
+ 
+      const newGoal = {
+        id: Date.now().toString(),
+        type: goalType,
+        name: goalName,
+        period: goalPeriod,
+        currentValue: currentValue,
+        targetValue: targetValue,
+        description: goalDescription,
+        createdAt: new Date().toISOString(),
+        deadline: new Date(Date.now() + goalPeriod * 24 * 60 * 60 * 1000).toISOString(),
+        completed: false
+      };
+
+      goals.push(newGoal);
+      localStorage.setItem('fitnessGoals', JSON.stringify(goals));
+ 
+      document.getElementById('goalName').value = '';
+      document.getElementById('currentValue').value = '';
+      document.getElementById('targetValue').value = '';
+      document.getElementById('goalDescription').value = '';
+
+      checkAchievements();
+      renderGoals();
+      
+      alert('✅ 새로운 목표가 생성되었습니다!');
+    }
+
+    function calculateProgress(goal) {
+      if (!workoutLogs.length) return 0;
+
+      const latestLog = workoutLogs.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+      
+      let currentValue;
+      switch (goal.type) {
+        case 'weight':
+          currentValue = latestLog.weight || goal.currentValue;
+          break;
+        case 'bodyfat':
+          currentValue = latestLog.bodyFat || goal.currentValue;
+          break;
+        case 'muscle':
+          currentValue = latestLog.muscleMass || goal.currentValue;
+          break;
+        case 'exercise':
+ 
+          const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+          currentValue = workoutLogs.filter(log => new Date(log.date) >= weekAgo).length;
+          break;
+        default:
+          currentValue = goal.currentValue;
+      }
+
+      const totalChange = Math.abs(goal.targetValue - goal.currentValue);
+      const currentChange = Math.abs(currentValue - goal.currentValue);
+      
+      return Math.min(100, (currentChange / totalChange) * 100);
+    }
+
+ 
+    function renderGoals() {
+      const container = document.getElementById('goalsContainer');
+      
+      if (goals.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #6b7280;">
+            <h3 style="margin-bottom: 16px; color: #9ca3af;">아직 설정된 목표가 없어요</h3>
+            <p>첫 번째 목표를 설정하고 피트니스 여정을 시작해보세요!</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = '';
+
+      goals.forEach(goal => {
+        const progress = calculateProgress(goal);
+        const labels = goalTypeLabels[goal.type];
+        const daysLeft = Math.max(0, Math.ceil((new Date(goal.deadline) - new Date()) / (1000 * 60 * 60 * 24)));
+        
+        const goalCard = document.createElement('div');
+        goalCard.className = 'goal-card';
+        goalCard.innerHTML = `
+          <div class="goal-header">
+            <div class="goal-icon">${labels.icon}</div>
+            <div class="goal-info">
+              <h3>${goal.name}</h3>
+              <p>${goal.description || '목표를 향해 달려가는 중입니다!'}</p>
+            </div>
+          </div>
+
+          <div class="goal-content">
+            <div class="goal-target">
+              <h4>📊 목표 정보</h4>
+              <div class="target-item">
+                <span class="target-label">시작값</span>
+                <span class="target-value">${goal.currentValue}${labels.unit}</span>
+              </div>
+              <div class="target-item">
+                <span class="target-label">목표값</span>
+                <span class="target-value">${goal.targetValue}${labels.unit}</span>
+              </div>
+              <div class="target-item">
+                <span class="target-label">남은 기간</span>
+                <span class="target-value">${daysLeft}일</span>
+              </div>
+            </div>
+
+            <div class="progress-container">
+              <div class="progress-header">
+                <span class="progress-label">달성률</span>
+                <span class="progress-percentage">${progress.toFixed(1)}%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${Math.min(100, progress)}%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="goal-actions">
+            <button class="btn btn-primary" onclick="viewGoalDetails('${goal.id}')">상세 보기</button>
+            <button class="btn btn-secondary" onclick="deleteGoal('${goal.id}')">삭제</button>
+          </div>
+        `;
+
+        container.appendChild(goalCard);
+      });
+    }
+ 
+    function viewGoalDetails(goalId) {
+      const goal = goals.find(g => g.id === goalId);
+      if (!goal) return;
+
+      const progress = calculateProgress(goal);
+      const labels = goalTypeLabels[goal.type];
+      
+      document.getElementById('modalContent').innerHTML = `
+        <div style="text-align: center; margin-bottom: 24px;">
+          <div style="font-size: 4rem; margin-bottom: 16px;">${labels.icon}</div>
+          <h2 style="color: #2d3748; margin-bottom: 8px;">${goal.name}</h2>
+          <p style="color: #6b7280;">${goal.description}</p>
+        </div>
+
+        <div style="background: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; text-align: center;">
+          <div>
+            <div style="font-size: 1.2rem; font-weight: 600; color: #2d3748;">${new Date(goal.createdAt).toLocaleDateString()}</div>
+            <div style="font-size: 0.8rem; color: #6b7280;">시작일</div>
+          </div>
+          <div>
+            <div style="font-size: 1.2rem; font-weight: 600; color: #2d3748;">${new Date(goal.deadline).toLocaleDateString()}</div>
+            <div style="font-size: 0.8rem; color: #6b7280;">목표일</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 24px;">
+          <button class="btn btn-primary" style="width: 100%;" onclick="closeModal()">확인</button>
+        </div>
+      `;
+
+      document.getElementById('goalModal').style.display = 'block';
+    }
+ 
+    function deleteGoal(goalId) {
+      if (!confirm('정말 이 목표를 삭제하시겠습니까?')) return;
+      
+      goals = goals.filter(g => g.id !== goalId);
+      localStorage.setItem('fitnessGoals', JSON.stringify(goals));
+      renderGoals();
+      
+      alert('✅ 목표가 삭제되었습니다.');
+    }
+ 
+    function closeModal() {
+      document.getElementById('goalModal').style.display = 'none';
+    }
+ 
+    function checkAchievements() {
+      const achievements = {
+        firstGoal: goals.length >= 1,
+        firstComplete: goals.some(g => calculateProgress(g) >= 100),
+        streak7: calculateStreak() >= 7,
+        workout50: workoutLogs.length >= 50,
+        weightGoal: goals.some(g => g.type === 'weight' && calculateProgress(g) >= 100),
+        bodyfatGoal: goals.some(g => g.type === 'bodyfat' && calculateProgress(g) >= 100)
+      };
+
+      Object.keys(achievements).forEach(achievementId => {
+        const element = document.getElementById(achievementId);
+        if (achievements[achievementId]) {
+          element.classList.add('completed');
+        }
+      });
+    }
+ 
+    function calculateStreak() {
+      if (workoutLogs.length === 0) return 0;
+      
+      const sortedDates = workoutLogs.map(log => new Date(log.date)).sort((a, b) => b - a);
+      const today = new Date();
+      let streak = 0;
+      
+      for (let i = 0; i < sortedDates.length; i++) {
+        const daysDiff = Math.floor((today - sortedDates[i]) / (1000 * 60 * 60 * 24));
+        if (daysDiff === i) {
+          streak++;
+        } else {
+          break;
+        }
+      }
+      
+      return streak;
+    }
+ 
+    document.querySelector('.close').addEventListener('click', closeModal);
+    window.addEventListener('click', (event) => {
+      if (event.target === document.getElementById('goalModal')) {
+        closeModal();
+      }
+    });
+
+    renderGoals();
+    checkAchievements();
+  </script>
+</body>
+</html>

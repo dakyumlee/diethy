@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>관리자 | 현숙이 일지</title>
+  <title>운동 관리자 | 현영이 피트니스</title>
   <style>
     @font-face {
     font-family: 'SBAggroB';
@@ -32,38 +32,39 @@
     }
 
     body.dark .container,
-    body.dark .admin-form,
-    body.dark .admin-logs {
+    body.dark .workout-form,
+    body.dark .workout-logs {
       background: #334155;
       border-color: #475569;
     }
 
     body.dark input,
-    body.dark select {
+    body.dark select,
+    body.dark textarea {
       background: #475569;
       border-color: #64748b;
       color: #f1f5f9;
     }
 
     .container {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
     }
 
     header {
-      background: white;
+      background: linear-gradient(135deg, #667eea, #764ba2);
       border-radius: 12px;
       padding: 24px;
       margin-bottom: 24px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      color: white;
     }
 
     header h1 {
-      color: #0f172a;
-      font-size: 1.8rem;
+      font-size: 2rem;
       font-weight: 700;
       margin-bottom: 20px;
+      text-align: center;
     }
 
     .controls {
@@ -71,251 +72,209 @@
       flex-wrap: wrap;
       gap: 12px;
       align-items: center;
+      justify-content: center;
     }
 
-    input[type="text"], select {
-      padding: 8px 12px;
+    input[type="text"], input[type="date"], input[type="number"], select {
+      padding: 10px 14px;
       border: 1px solid #d1d5db;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 0.9rem;
       font-family: 'SBAggroB';
       background: white;
-    }
-
-    input[type="text"]:focus, select:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-
-    #emojiFilter {
-      display: flex;
-      gap: 4px;
-    }
-
-    #emojiFilter button {
-      padding: 6px 12px;
-      background: #f3f4f6;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.9rem;
       transition: all 0.2s ease;
     }
 
-    #emojiFilter button.active {
-      background: #3b82f6;
-      color: white;
-      border-color: #3b82f6;
+    input:focus, select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
 
     button {
-      padding: 8px 16px;
-      background: #3b82f6;
+      padding: 10px 18px;
+      background: #667eea;
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 0.9rem;
       font-weight: 500;
       cursor: pointer;
-      transition: background-color 0.2s ease;
+      transition: all 0.2s ease;
       font-family: 'SBAggroB';
     }
 
     button:hover {
-      background: #2563eb;
+      background: #5a67d8;
+      transform: translateY(-1px);
     }
 
-    .diary-section {
+    .workout-section {
       background: white;
-      border-radius: 12px;
-      padding: 24px;
+      border-radius: 16px;
+      padding: 32px;
       margin-bottom: 32px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
       border: 1px solid #e2e8f0;
     }
 
-    .diary-section h3 {
-      color: #0f172a;
-      font-size: 1.3rem;
+    .workout-section h3 {
+      color: #2d3748;
+      font-size: 1.4rem;
       font-weight: 600;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
       text-align: center;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
-    .diary-form {
-      max-width: 600px;
+    .workout-form {
+      max-width: 800px;
       margin: 0 auto;
     }
 
-    .diary-row {
-      margin-bottom: 20px;
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 24px;
     }
 
-    .diary-row label {
-      display: block;
-      margin-bottom: 8px;
-      color: #374151;
-      font-weight: 500;
-      font-size: 1rem;
+    .form-group {
+      background: #f8fafc;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
     }
 
-    .diary-row input[type="date"],
-    .diary-row input[type="number"],
-    .diary-row textarea {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-family: 'Noto Sans KR', sans-serif;
-      background: #f9fafb;
-      transition: all 0.2s ease;
-    }
-
-    .diary-row input:focus,
-    .diary-row textarea:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-      background: white;
-    }
-
-    .diary-row textarea {
-      resize: vertical;
-      min-height: 80px;
-      line-height: 1.5;
-    }
-
-    .weight-input-group {
+    .form-group h4 {
+      color: #4a5568;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 16px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .weight-input-group input {
+    .form-row {
+      margin-bottom: 16px;
+    }
+
+    .form-row label {
+      display: block;
+      margin-bottom: 6px;
+      color: #374151;
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .form-row input,
+    .form-row textarea,
+    .form-row select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      background: white;
+      transition: all 0.2s ease;
+    }
+
+    .form-row input:focus,
+    .form-row textarea:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-row textarea {
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.5;
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .input-group input {
       flex: 1;
     }
 
-    .weight-input-group span {
+    .input-group span {
       color: #6b7280;
       font-weight: 500;
+      min-width: 30px;
     }
 
-    .mood-selector {
+    .workout-types {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
       gap: 8px;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
 
-    .mood-btn {
-      padding: 10px 12px;
+    .workout-btn {
+      padding: 8px 12px;
       background: #f3f4f6;
       border: 1px solid #d1d5db;
       border-radius: 8px;
       cursor: pointer;
       font-size: 0.9rem;
-      font-family: 'SBAggroB';
       transition: all 0.2s ease;
       text-align: center;
+      font-family: 'SBAggroB';
     }
 
-    .mood-btn:hover {
+    .workout-btn:hover {
       background: #e5e7eb;
-      border-color: #9ca3af;
     }
 
-    .mood-btn.active {
-      background: #3b82f6;
+    .workout-btn.active {
+      background: #667eea;
       color: white;
-      border-color: #3b82f6;
+      border-color: #667eea;
     }
 
-    .diary-save-btn {
+    .save-btn {
       width: 100%;
       padding: 16px;
-      background: #059669;
+      background: linear-gradient(135deg, #48bb78, #38a169);
       color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 1.1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
-      font-family: 'Noto Sans KR', sans-serif;
-      margin-top: 8px;
-    }
-
-    .diary-save-btn:hover {
-      background: #047857;
-      transform: translateY(-1px);
-    }
-
-    .diary-save-btn:disabled {
-      background: #9ca3af;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .admin-form {
-      background: white;
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 24px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      border: 1px solid #e2e8f0;
-    }
-
-    .admin-form h3 {
-      color: #0f172a;
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 16px;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .admin-form input {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      font-size: 0.9rem;
+      transition: all 0.3s ease;
       font-family: 'SBAggroB';
+      margin-top: 16px;
     }
 
-    .admin-form input:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    .save-btn:hover {
+      background: linear-gradient(135deg, #38a169, #2f855a);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(72, 187, 120, 0.3);
     }
 
-    .admin-form button {
-      width: 100%;
-      padding: 12px;
-      font-size: 1rem;
-      font-weight: 600;
-    }
-
-    .admin-logs {
+    .workout-logs {
       background: white;
-      border-radius: 12px;
+      border-radius: 16px;
       padding: 24px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
       border: 1px solid #e2e8f0;
     }
 
-    .admin-logs h3 {
-      color: #0f172a;
-      font-size: 1.2rem;
+    .workout-logs h3 {
+      color: #2d3748;
+      font-size: 1.3rem;
       font-weight: 600;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
+      text-align: center;
     }
 
     #logList {
@@ -325,52 +284,78 @@
     #logList li {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
       transition: all 0.2s ease;
     }
 
     #logList li:hover {
       background: #f1f5f9;
       border-color: #cbd5e1;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
-    #logList li > div:first-child {
-      flex: 1;
-      color: #374151;
-      font-size: 0.9rem;
-      line-height: 1.5;
+    .log-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e2e8f0;
     }
 
-    #logList li > div:last-child {
+    .log-date {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    .log-actions {
       display: flex;
       gap: 8px;
     }
 
     .edit, .delete {
-      padding: 4px 8px;
+      padding: 6px 12px;
       font-size: 0.8rem;
-      border-radius: 4px;
+      border-radius: 6px;
+      font-weight: 500;
     }
 
     .edit {
-      background: #10b981;
+      background: #48bb78;
     }
 
     .edit:hover {
-      background: #059669;
+      background: #38a169;
     }
 
     .delete {
-      background: #ef4444;
+      background: #f56565;
     }
 
     .delete:hover {
-      background: #dc2626;
+      background: #e53e3e;
+    }
+
+    .log-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .log-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: #4a5568;
+    }
+
+    .log-icon {
+      font-size: 1.1rem;
     }
 
     .loading {
@@ -388,22 +373,18 @@
     }
 
     @media (max-width: 768px) {
-      .controls {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
       .form-grid {
         grid-template-columns: 1fr;
       }
 
-      #logList li {
-        flex-direction: column;
-        gap: 12px;
+      .log-content {
+        grid-template-columns: 1fr;
       }
 
-      #logList li > div:last-child {
-        justify-content: flex-end;
+      .log-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
       }
     }
   </style>
@@ -411,391 +392,318 @@
 <body>
   <div class="container">
     <header>
-      <h1>현숙이의 다이어트 관리자</h1>
+      <h1>🏋️‍♀️ 현숙이의 피트니스 관리자</h1>
       <div class="controls">
-        <input type="text" id="searchInput" placeholder="검색">
+        <input type="text" id="searchInput" placeholder="🔍 운동 기록 검색">
         <select id="sortSelect">
           <option value="date-desc">날짜 내림차순</option>
           <option value="date-asc">날짜 오름차순</option>
           <option value="weight-desc">몸무게 내림차순</option>
           <option value="weight-asc">몸무게 오름차순</option>
         </select>
-        <div id="emojiFilter">
-          <button data-emoji="😄">😄</button>
-          <button data-emoji="😢">😢</button>
-          <button data-emoji="😡">😡</button>
-          <button data-emoji="all" class="active">모두</button>
-        </div>
-        <button id="darkToggle">다크모드</button>
-        <button id="downloadPDF">PDF</button>
-        <button id="downloadCSV">CSV</button>
-        <button id="restoreCSV">복원</button>
+        <button id="darkToggle">🌙 다크모드</button>
+        <button id="downloadPDF">📄 PDF</button>
+        <button id="downloadCSV">📊 CSV</button>
       </div>
     </header>
 
-    <section class="diary-section">
-      <h3>📖 오늘의 일지 작성하기</h3>
-      <div class="diary-form">
-        <div class="diary-row">
-          <label>📅 날짜</label>
-          <input type="date" id="diaryDateInput">
-        </div>
-        
-        <div class="diary-row">
-          <label>⚖️ 몸무게</label>
-          <div class="weight-input-group">
-            <input type="number" id="diaryWeightInput" placeholder="62.5" step="0.1" min="20" max="300">
-            <span>kg</span>
+    <section class="workout-section">
+      <h3>📝 오늘의 운동 기록 작성하기</h3>
+      <div class="workout-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <h4>📅 기본 정보</h4>
+            <div class="form-row">
+              <label>날짜</label>
+              <input type="date" id="workoutDate">
+            </div>
+            <div class="form-row">
+              <label>⚖️ 몸무게</label>
+              <div class="input-group">
+                <input type="number" id="weight" placeholder="65.5" step="0.1" min="30" max="200">
+                <span>kg</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <h4>📊 체성분 분석</h4>
+            <div class="form-row">
+              <label>🔥 체지방률</label>
+              <div class="input-group">
+                <input type="number" id="bodyFat" placeholder="18.5" step="0.1" min="5" max="50">
+                <span>%</span>
+              </div>
+            </div>
+            <div class="form-row">
+              <label>💪 근량</label>
+              <div class="input-group">
+                <input type="number" id="muscleMass" placeholder="45.2" step="0.1" min="10" max="80">
+                <span>kg</span>
+              </div>
+            </div>
           </div>
         </div>
-        
-        <div class="diary-row">
-          <label>🍱 오늘 먹은 것</label>
-          <textarea id="diaryDietInput" placeholder="아침: 샐러드, 점심: 닭가슴살, 저녁: 현미밥..."></textarea>
-        </div>
-        
-        <div class="diary-row">
-          <label>🏃‍♀️ 오늘 한 운동</label>
-          <textarea id="diaryExerciseInput" placeholder="30분 조깅, 20분 요가, 스쿼트 50개..."></textarea>
-        </div>
-        
-        <div class="diary-row">
-          <label>😊 오늘의 기분</label>
-          <div class="mood-selector">
-            <button type="button" class="mood-btn" data-mood="😊">😊 좋음</button>
-            <button type="button" class="mood-btn" data-mood="😐">😐 보통</button>
-            <button type="button" class="mood-btn" data-mood="😢">😢 우울</button>
-            <button type="button" class="mood-btn" data-mood="😡">😡 화남</button>
-            <button type="button" class="mood-btn" data-mood="🤗">🤗 행복</button>
-            <button type="button" class="mood-btn" data-mood="😴">😴 피곤</button>
+
+        <div class="form-group">
+          <h4>🏋️‍♀️ 운동 종류</h4>
+          <div class="workout-types">
+            <button type="button" class="workout-btn" data-type="유산소">🏃‍♀️ 유산소</button>
+            <button type="button" class="workout-btn" data-type="근력">💪 근력</button>
+            <button type="button" class="workout-btn" data-type="요가">🧘‍♀️ 요가</button>
+            <button type="button" class="workout-btn" data-type="스트레칭">🤸‍♀️ 스트레칭</button>
+            <button type="button" class="workout-btn" data-type="수영">🏊‍♀️ 수영</button>
+            <button type="button" class="workout-btn" data-type="사이클">🚴‍♀️ 사이클</button>
           </div>
-          <input type="hidden" id="diaryMoodInput">
+          <input type="hidden" id="workoutTypes">
+          <div class="form-row">
+            <label>상세 운동 내용</label>
+            <textarea id="workoutDetails" placeholder="예: 런닝머신 30분, 벤치프레스 3세트 10회, 스쿼트 3세트 15회..." rows="4"></textarea>
+          </div>
         </div>
-        
-        <div class="diary-row">
-          <label>💭 오늘의 일기</label>
-          <textarea id="diaryMemoInput" placeholder="오늘 하루는 어땠나요? 느꼈던 점이나 내일의 다짐을 자유롭게 적어보세요..." rows="4"></textarea>
+
+        <div class="form-group">
+          <h4>⏱️ 운동 시간 & 강도</h4>
+          <div class="form-row">
+            <label>운동 시간</label>
+            <div class="input-group">
+              <input type="number" id="duration" placeholder="60" min="5" max="300">
+              <span>분</span>
+            </div>
+          </div>
+          <div class="form-row">
+            <label>운동 강도</label>
+            <select id="intensity">
+              <option value="">강도 선택</option>
+              <option value="낮음">낮음 (가벼운 운동)</option>
+              <option value="보통">보통 (적당한 운동)</option>
+              <option value="높음">높음 (고강도 운동)</option>
+              <option value="매우높음">매우 높음 (극한 운동)</option>
+            </select>
+          </div>
         </div>
-        
-        <button id="saveDiaryBtn" class="diary-save-btn">
-          <span class="btn-text">💾 일지 저장하기</span>
+
+        <div class="form-group">
+          <h4>💭 오늘의 기록</h4>
+          <div class="form-row">
+            <label>컨디션 & 느낌</label>
+            <textarea id="notes" placeholder="오늘 운동은 어땠나요? 컨디션, 느낀 점, 내일의 목표 등을 자유롭게 기록하세요..." rows="3"></textarea>
+          </div>
+        </div>
+
+        <button id="saveWorkoutBtn" class="save-btn">
+          <span class="btn-text">💾 운동 기록 저장하기</span>
         </button>
       </div>
     </section>
 
-    <section class="admin-form">
-      <h3>⚙️ 빠른 데이터 입력 (관리자용)</h3>
-      <div class="form-grid">
-        <input type="date" id="dateInput">
-        <input type="number" id="weightInput" placeholder="몸무게" step="0.1">
-        <input type="text" id="dietInput" placeholder="식단">
-        <input type="text" id="exerciseInput" placeholder="운동">
-        <input type="text" id="moodInput" placeholder="기분">
-        <input type="text" id="memoInput" placeholder="오늘의 한 줄 일기">
-      </div>
-      <button id="addLogBtn">저장</button>
-    </section>
-
-    <section class="admin-logs">
-      <h3>전체 기록</h3>
+    <section class="workout-logs">
+      <h3>📋 전체 운동 기록</h3>
       <ul id="logList"></ul>
     </section>
   </div>
 
-  <script type="module">
-    import { db } from './js/firebase.js';
-    import {
-      collection, addDoc, getDocs, deleteDoc, updateDoc, doc, Timestamp
-    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+  <script>
+    let workoutLogs = JSON.parse(localStorage.getItem('workoutLogs') || '[]');
 
-    const logList = document.getElementById("logList");
-    const colRef = collection(db, "dailyLogs");
-    let logs = [];
+    document.getElementById('workoutDate').value = new Date().toISOString().slice(0, 10);
 
-    const getInputValues = () => ({
-      date: document.getElementById("dateInput").value,
-      weight: parseFloat(document.getElementById("weightInput").value),
-      diet: document.getElementById("dietInput").value,
-      exercise: document.getElementById("exerciseInput").value,
-      mood: document.getElementById("moodInput").value,
-      memo: document.getElementById("memoInput").value
+    document.querySelectorAll('.workout-btn').forEach(btn => {
+      btn.onclick = () => {
+        btn.classList.toggle('active');
+        updateWorkoutTypes();
+      };
     });
 
-    const renderLogs = () => {
-      logList.innerHTML = "";
-      const search = document.getElementById("searchInput").value.toLowerCase();
-      const sort = document.getElementById("sortSelect").value;
-      const filterEmoji = document.querySelector('#emojiFilter .active')?.dataset.emoji || "all";
+    function updateWorkoutTypes() {
+      const activeTypes = Array.from(document.querySelectorAll('.workout-btn.active'))
+        .map(btn => btn.dataset.type);
+      document.getElementById('workoutTypes').value = activeTypes.join(', ');
+    }
 
-      let filtered = logs.filter(log => {
-        const memo = log.memo || "";
-        const diet = log.diet || "";
-        const exercise = log.exercise || "";
-        return memo.toLowerCase().includes(search) ||
-               diet.toLowerCase().includes(search) ||
-               exercise.toLowerCase().includes(search);
-      });
+      document.getElementById('saveWorkoutBtn').onclick = async () => {
+      const workoutData = {
+        date: document.getElementById('workoutDate').value,
+        weight: parseFloat(document.getElementById('weight').value),
+        bodyFat: parseFloat(document.getElementById('bodyFat').value),
+        muscleMass: parseFloat(document.getElementById('muscleMass').value),
+        workoutTypes: document.getElementById('workoutTypes').value,
+        workoutDetails: document.getElementById('workoutDetails').value,
+        duration: parseInt(document.getElementById('duration').value),
+        intensity: document.getElementById('intensity').value,
+        notes: document.getElementById('notes').value,
+        timestamp: new Date().toISOString()
+      };
 
-      if (filterEmoji !== "all") {
-        filtered = filtered.filter(log => {
-          const mood = log.mood || "";
-          return mood.includes(filterEmoji);
-        });
+      if (!workoutData.date) {
+        alert('날짜를 선택해주세요!');
+        return;
       }
 
-      filtered.sort((a, b) => {
-        if (sort === "date-desc") return b.date - a.date;
-        if (sort === "date-asc") return a.date - b.date;
-        if (sort === "weight-desc") return b.weight - a.weight;
-        if (sort === "weight-asc") return a.weight - b.weight;
+      if (!workoutData.weight || workoutData.weight < 30 || workoutData.weight > 200) {
+        alert('올바른 몸무게를 입력해주세요! (30-200kg)');
+        return;
+      }
+
+      if (!workoutData.workoutDetails.trim()) {
+        alert('운동 내용을 입력해주세요!');
+        return;
+      }
+
+      const saveBtn = document.getElementById('saveWorkoutBtn');
+      const btnText = saveBtn.querySelector('.btn-text');
+      
+      btnText.innerHTML = '<div class="loading"></div> 저장 중...';
+      saveBtn.disabled = true;
+
+      try {
+        workoutData.id = Date.now().toString();
+        workoutLogs.unshift(workoutData);
+        localStorage.setItem('workoutLogs', JSON.stringify(workoutLogs));
+
+        alert('✅ 운동 기록이 성공적으로 저장되었습니다!');
+        
+        document.getElementById('workoutDetails').value = '';
+        document.getElementById('duration').value = '';
+        document.getElementById('intensity').value = '';
+        document.getElementById('notes').value = '';
+        document.querySelectorAll('.workout-btn').forEach(btn => btn.classList.remove('active'));
+        updateWorkoutTypes();
+
+        renderLogs();
+
+      } catch (error) {
+        console.error('저장 실패:', error);
+        alert('❌ 저장에 실패했습니다: ' + error.message);
+      } finally {
+        btnText.innerHTML = '💾 운동 기록 저장하기';
+        saveBtn.disabled = false;
+      }
+    };
+
+    function renderLogs() {
+      const logList = document.getElementById('logList');
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      
+      let filteredLogs = workoutLogs.filter(log => 
+        log.workoutDetails.toLowerCase().includes(searchTerm) ||
+        log.workoutTypes.toLowerCase().includes(searchTerm) ||
+        log.notes.toLowerCase().includes(searchTerm)
+      );
+
+      const sortBy = document.getElementById('sortSelect').value;
+      filteredLogs.sort((a, b) => {
+        if (sortBy === 'date-desc') return new Date(b.date) - new Date(a.date);
+        if (sortBy === 'date-asc') return new Date(a.date) - new Date(b.date);
+        if (sortBy === 'weight-desc') return b.weight - a.weight;
+        if (sortBy === 'weight-asc') return a.weight - b.weight;
         return 0;
       });
 
-      if (filtered.length === 0) {
+      logList.innerHTML = '';
+
+      if (filteredLogs.length === 0) {
         logList.innerHTML = `
           <li style="text-align: center; padding: 40px; color: #6b7280;">
-            검색 결과가 없습니다.
+            검색 결과가 없습니다. 첫 운동 기록을 작성해보세요!
           </li>
         `;
         return;
       }
 
-      filtered.forEach(log => {
-        const li = document.createElement("li");
+      filteredLogs.forEach(log => {
+        const li = document.createElement('li');
         li.innerHTML = `
-          <div>
-            📅 ${log.date.toLocaleDateString()} |
-            ⚖️ ${log.weight || 0}kg |
-            🍱 ${log.diet || "기록없음"} |
-            🏃‍♀️ ${log.exercise || "기록없음"} |
-            😊 ${log.mood || "😐"} |
-            💬 ${log.memo || "기록없음"}
+          <div class="log-header">
+            <div class="log-date">📅 ${new Date(log.date).toLocaleDateString()}</div>
+            <div class="log-actions">
+              <button class="edit" onclick="editLog('${log.id}')">수정</button>
+              <button class="delete" onclick="deleteLog('${log.id}')">삭제</button>
+            </div>
           </div>
-          <div>
-            <button data-id="${log.id}" class="edit">수정</button>
-            <button data-id="${log.id}" class="delete">삭제</button>
+          <div class="log-content">
+            <div class="log-item">
+              <span class="log-icon">⚖️</span>
+              <span>${log.weight || '-'}kg</span>
+            </div>
+            <div class="log-item">
+              <span class="log-icon">🔥</span>
+              <span>체지방 ${log.bodyFat || '-'}%</span>
+            </div>
+            <div class="log-item">
+              <span class="log-icon">💪</span>
+              <span>근량 ${log.muscleMass || '-'}kg</span>
+            </div>
+            <div class="log-item">
+              <span class="log-icon">🏋️‍♀️</span>
+              <span>${log.workoutTypes || '운동없음'}</span>
+            </div>
+            <div class="log-item">
+              <span class="log-icon">⏱️</span>
+              <span>${log.duration || '-'}분 (${log.intensity || '강도없음'})</span>
+            </div>
+            <div class="log-item" style="grid-column: 1/-1;">
+              <span class="log-icon">📝</span>
+              <span>${log.workoutDetails || '기록없음'}</span>
+            </div>
+            ${log.notes ? `
+            <div class="log-item" style="grid-column: 1/-1;">
+              <span class="log-icon">💭</span>
+              <span>${log.notes}</span>
+            </div>
+            ` : ''}
           </div>
         `;
         logList.appendChild(li);
       });
-
-      document.querySelectorAll(".delete").forEach(btn => {
-        btn.onclick = async () => {
-          if (!confirm("정말 삭제하시겠습니까?")) return;
-          
-          try {
-            await deleteDoc(doc(db, "dailyLogs", btn.dataset.id));
-            alert("✅ 삭제되었습니다!");
-            loadLogs();
-          } catch (error) {
-            console.error("삭제 실패:", error);
-            alert("❌ 삭제에 실패했습니다.");
-          }
-        };
-      });
-
-      document.querySelectorAll(".edit").forEach(btn => {
-        btn.onclick = () => {
-          const log = logs.find(l => l.id === btn.dataset.id);
-          if (!log) return;
-
-          document.getElementById("dateInput").value = log.date.toISOString().substring(0,10);
-          document.getElementById("weightInput").value = log.weight || "";
-          document.getElementById("dietInput").value = log.diet || "";
-          document.getElementById("exerciseInput").value = log.exercise || "";
-          document.getElementById("moodInput").value = log.mood || "";
-          document.getElementById("memoInput").value = log.memo || "";
-          
-          const addLogBtn = document.getElementById("addLogBtn");
-          addLogBtn.textContent = "수정완료";
-          addLogBtn.onclick = async () => {
-            const updated = getInputValues();
-            if (!updated.date || !updated.weight) {
-              alert("날짜와 몸무게는 필수입니다!");
-              return;
-            }
-
-            try {
-              await updateDoc(doc(db, "dailyLogs", btn.dataset.id), {
-                date: Timestamp.fromDate(new Date(updated.date)),
-                weight: updated.weight,
-                diet: updated.diet || "기록없음",
-                exercise: updated.exercise || "기록없음",
-                mood: updated.mood || "😐",
-                memo: updated.memo || "기록없음"
-              });
-              
-              alert("✅ 수정되었습니다!");
-              resetForm();
-              loadLogs();
-            } catch (error) {
-              console.error("수정 실패:", error);
-              alert("❌ 수정에 실패했습니다.");
-            }
-          };
-
-          document.querySelector(".admin-form").scrollIntoView({ behavior: 'smooth' });
-        };
-      });
-    };
-
-    const loadLogs = async () => {
-      try {
-        const snapshot = await getDocs(colRef);
-        logs = snapshot.docs.map(doc => {
-          const data = doc.data();
-          return { 
-            id: doc.id, 
-            ...data, 
-            date: data.date?.toDate ? data.date.toDate() : new Date(data.date),
-            weight: data.weight || 0,
-            diet: data.diet || data.message || "기록없음",
-            exercise: data.exercise || "기록없음",
-            mood: data.mood || "😐",
-            memo: data.memo || data.message || "기록없음"
-          };
-        });
-        console.log("로그 로드됨:", logs.length, "개");
-        renderLogs();
-      } catch (error) {
-        console.error("로그 로딩 실패:", error);
-        alert("❌ 데이터를 불러오는데 실패했습니다: " + error.message);
-      }
-    };
-
-    const resetForm = () => {
-      document.getElementById("addLogBtn").textContent = "저장";
-      document.getElementById("addLogBtn").onclick = addLog;
-      document.querySelector(".admin-form").reset();
-    };
-
-    const addLog = async () => {
-      const { date, weight, diet, exercise, mood, memo } = getInputValues();
-      
-      if (!date) {
-        alert("날짜를 입력해주세요!");
-        return;
-      }
-      
-      if (!weight || weight < 20 || weight > 300) {
-        alert("올바른 몸무게를 입력해주세요! (20-300kg)");
-        return;
-      }
-
-      try {
-        await addDoc(colRef, {
-          date: Timestamp.fromDate(new Date(date)), 
-          weight: weight,
-          diet: diet || "기록없음",
-          exercise: exercise || "기록없음", 
-          mood: mood || "😐",
-          memo: memo || "기록없음"
-        });
-        
-        alert("✅ 저장되었습니다!");
-        resetForm();
-        loadLogs();
-      } catch (error) {
-        console.error("저장 실패:", error);
-        alert("❌ 저장에 실패했습니다: " + error.message);
-      }
-    };
-
-    document.getElementById("addLogBtn").onclick = addLog;
-    document.getElementById("searchInput").oninput = renderLogs;
-    document.getElementById("sortSelect").onchange = renderLogs;
-    document.querySelectorAll("#emojiFilter button").forEach(btn => {
-      btn.onclick = () => {
-        document.querySelectorAll("#emojiFilter button").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        renderLogs();
-      };
-    });
-
-    document.getElementById("darkToggle").onclick = () => {
-      document.body.classList.toggle("dark");
-      localStorage.setItem("darkmode", document.body.classList.contains("dark") ? "on" : "off");
-    };
-
-    if (localStorage.getItem("darkmode") === "on") {
-      document.body.classList.add("dark");
     }
 
-    const diaryDateInput = document.getElementById("diaryDateInput");
-    const diaryWeightInput = document.getElementById("diaryWeightInput");
-    const diaryDietInput = document.getElementById("diaryDietInput");
-    const diaryExerciseInput = document.getElementById("diaryExerciseInput");
-    const diaryMoodInput = document.getElementById("diaryMoodInput");
-    const diaryMemoInput = document.getElementById("diaryMemoInput");
-    const saveDiaryBtn = document.getElementById("saveDiaryBtn");
+    function deleteLog(id) {
+      if (!confirm('정말 삭제하시겠습니까?')) return;
+      
+      workoutLogs = workoutLogs.filter(log => log.id !== id);
+      localStorage.setItem('workoutLogs', JSON.stringify(workoutLogs));
+      alert('✅ 삭제되었습니다!');
+      renderLogs();
+    }
 
-    diaryDateInput.value = new Date().toISOString().slice(0, 10);
+    document.getElementById('searchInput').oninput = renderLogs;
+    document.getElementById('sortSelect').onchange = renderLogs;
 
-    document.querySelectorAll(".mood-btn").forEach(btn => {
-      btn.onclick = () => {
-        document.querySelectorAll(".mood-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        diaryMoodInput.value = btn.dataset.mood;
-      };
-    });
-
-    saveDiaryBtn.onclick = async () => {
-      const date = diaryDateInput.value;
-      const weight = parseFloat(diaryWeightInput.value);
-      const diet = diaryDietInput.value.trim();
-      const exercise = diaryExerciseInput.value.trim();
-      const mood = diaryMoodInput.value;
-      const memo = diaryMemoInput.value.trim();
-
-      if (!date) {
-        alert("날짜를 선택해주세요!");
-        return;
-      }
-
-      if (!weight || weight < 20 || weight > 300) {
-        alert("올바른 몸무게를 입력해주세요! (20-300kg)");
-        return;
-      }
-
-      if (!diet) {
-        alert("오늘 먹은 것을 입력해주세요!");
-        return;
-      }
-
-      const btnText = saveDiaryBtn.querySelector('.btn-text');
-      btnText.innerHTML = '<div class="loading"></div> 저장 중...';
-      saveDiaryBtn.disabled = true;
-
-      try {
-        await addDoc(colRef, {
-          date: Timestamp.fromDate(new Date(date)),
-          weight: weight,
-          diet: diet || "기록없음",
-          exercise: exercise || "운동 안함",
-          mood: mood || "😐",
-          memo: memo || "특별한 일 없음"
-        });
-
-        alert("✅ 일지가 성공적으로 저장되었습니다!");
-        
-        diaryDietInput.value = "";
-        diaryExerciseInput.value = "";
-        diaryMemoInput.value = "";
-        diaryMoodInput.value = "";
-        document.querySelectorAll(".mood-btn").forEach(b => b.classList.remove("active"));
-
-        loadLogs();
-
-      } catch (error) {
-        console.error("일지 저장 실패:", error);
-        alert("❌ 저장에 실패했습니다: " + error.message);
-      } finally {
-        btnText.innerHTML = "💾 일지 저장하기";
-        saveDiaryBtn.disabled = false;
-      }
+    document.getElementById('darkToggle').onclick = () => {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('darkmode', document.body.classList.contains('dark') ? 'on' : 'off');
     };
 
-    loadLogs();
+    if (localStorage.getItem('darkmode') === 'on') {
+      document.body.classList.add('dark');
+    }
+
+    document.getElementById('downloadCSV').onclick = () => {
+      const headers = ['날짜', '몸무게(kg)', '체지방(%)', '근량(kg)', '운동종류', '운동시간(분)', '강도', '운동내용', '메모'];
+      const csvContent = [
+        headers.join(','),
+        ...workoutLogs.map(log => [
+          log.date,
+          log.weight || '',
+          log.bodyFat || '',
+          log.muscleMass || '',
+          log.workoutTypes || '',
+          log.duration || '',
+          log.intensity || '',
+          `"${(log.workoutDetails || '').replace(/"/g, '""')}"`,
+          `"${(log.notes || '').replace(/"/g, '""')}"`
+        ].join(','))
+      ].join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `workout-log-${new Date().toISOString().slice(0, 10)}.csv`;
+      link.click();
+    };
+
+    renderLogs();
   </script>
 </body>
 </html>

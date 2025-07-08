@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>신체 분석 | 현영이 피트니스</title>
+  <style>
+    @font-face {
+    font-family: 'SBAggroB';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroB.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'SBAggroB';
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: #1e293b;
+      padding: 20px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 32px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      color: white;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 24px;
+    }
+
+    .nav-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .nav-header a {
+      display: inline-block;
+      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-header a:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .controls {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+    }
+
+    .controls h3 {
+      color: #2d3748;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-group label {
+      font-weight: 500;
+      color: #374151;
+      font-size: 0.9rem;
+    }
+
+    select, input[type="date"] {
+      padding: 10px 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: 'SBAggroB';
+      background: white;
+      min-width: 140px;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .charts-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .chart-card {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .chart-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .chart-card h3 {
+      color: #2d3748;
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      text-align: center;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 400px;
+      margin-bottom: 20px;
+    }
+
+    .stats-summary {
+      background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+      text-align: center;
+    }
+
+    .stat-item {
+      background: white;
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      transition: all 0.2s ease;
+    }
+
+    .stat-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .stat-weight { color: #3b82f6; }
+    .stat-bodyfat { color: #f59e0b; }
+    .stat-muscle { color: #10b981; }
+    .stat-change { color: #8b5cf6; }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #6b7280;
+      background: white;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .empty-state h3 {
+      font-size: 1.4rem;
+      margin-bottom: 12px;
+      color: #9ca3af;
+    }
+
+    .empty-state p {
+      font-size: 1rem;
+      margin-bottom: 24px;
+    }
+
+    .empty-state button {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .empty-state button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .progress-indicators {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 24px 0;
+    }
+
+    .progress-item {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid #e2e8f0;
+      text-align: center;
+    }
+
+    .progress-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    .progress-weight { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+    .progress-fat { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .progress-muscle { background: linear-gradient(135deg, #10b981, #047857); }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 10px;
+      }
+
+      header {
+        padding: 24px;
+      }
+
+      header h1 {
+        font-size: 2rem;
+      }
+
+      .chart-wrapper {
+        height: 300px;
+      }
+
+      .filter-options {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .comparison-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .comparison-grid {
+        grid-template-columns: 2fr 1fr;
+      }
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📊 신체 분석 대시보드</h1>
+      <p>몸무게, 체지방, 근량 변화를 한눈에 분석하고 트렌드를 파악하세요</p>
+      <div class="nav-header">
+        <a href="index.html">🏠 메인으로</a>
+        <a href="workout-history.html">📖 운동 기록</a>
+        <a href="login.html">✏️ 기록 작성</a>
+      </div>
+    </header>
+
+    <div class="controls">
+      <h3>📅 분석 옵션</h3>
+      <div class="filter-options">
+        <div class="filter-group">
+          <label>기간 선택</label>
+          <select id="periodSelect">
+            <option value="all">전체 기간</option>
+            <option value="30">최근 30일</option>
+            <option value="90">최근 3개월</option>
+            <option value="180">최근 6개월</option>
+            <option value="365">최근 1년</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>시작 날짜</label>
+          <input type="date" id="startDate">
+        </div>
+        <div class="filter-group">
+          <label>종료 날짜</label>
+          <input type="date" id="endDate">
+        </div>
+        <div class="filter-group">
+          <label>차트 타입</label>
+          <select id="chartType">
+            <option value="line">선형 그래프</option>
+            <option value="bar">막대 그래프</option>
+            <option value="area">영역 그래프</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div id="progressSection" class="chart-card" style="display: none;">
+      <h3>🎯 목표 달성률</h3>
+      <div class="progress-indicators">
+        <div class="progress-item">
+          <div class="progress-circle progress-weight" id="weightProgress">-</div>
+          <div>목표 몸무게</div>
+          <small id="weightGoal">목표: -kg</small>
+        </div>
+        <div class="progress-item">
+          <div class="progress-circle progress-fat" id="fatProgress">-</div>
+          <div>목표 체지방률</div>
+          <small id="fatGoal">목표: -%</small>
+        </div>
+        <div class="progress-item">
+          <div class="progress-circle progress-muscle" id="muscleProgress">-</div>
+          <div>목표 근량</div>
+          <small id="muscleGoal">목표: -kg</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="comparison-grid">
+      <div class="chart-card">
+        <h3>📈 종합 신체 변화 추이</h3>
+        <div class="chart-wrapper">
+          <canvas id="combinedChart"></canvas>
+        </div>
+        <div class="stats-summary">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-value stat-weight" id="avgWeight">-</div>
+              <div class="stat-label">평균 몸무게</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value stat-bodyfat" id="avgBodyFat">-</div>
+              <div class="stat-label">평균 체지방률</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value stat-muscle" id="avgMuscle">-</div>
+              <div class="stat-label">평균 근량</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value stat-change" id="totalChange">-</div>
+              <div class="stat-label">총 변화량</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>🔥 체지방률 변화</h3>
+        <div class="chart-wrapper">
+          <canvas id="bodyFatChart"></canvas>
+        </div>
+        <div class="stats-summary">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-value stat-bodyfat" id="minBodyFat">-</div>
+              <div class="stat-label">최저 체지방률</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value stat-bodyfat" id="maxBodyFat">-</div>
+              <div class="stat-label">최고 체지방률</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value stat-bodyfat" id="bodyFatChange">-</div>
+              <div class="stat-label">체지방 변화</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="comparison-grid">
+      <div class="chart-card">
+        <h3>💪 근량 변화 추이</h3>
+        <div class="chart-wrapper">
+          <canvas id="muscleChart"></canvas>
+        </div>
+        <div class="stats-summary">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-value stat-muscle" id="minMuscle">-</div>
+              <div class="stat-label">최소 근량</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value stat-muscle" id="maxMuscle">-</div>
+              <div class="stat-label">최대 근량</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value stat-muscle" id="muscleChange">-</div>
+              <div class="stat-label">근량 변화</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>⚖️ 체성분 비율</h3>
+        <div class="chart-wrapper">
+          <canvas id="compositionChart"></canvas>
+        </div>
+        <div class="stats-summary">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-value stat-muscle" id="muscleRatio">-</div>
+              <div class="stat-label">근량 비율</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value stat-bodyfat" id="fatRatio">-</div>
+              <div class="stat-label">체지방 비율</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="otherRatio">-</div>
+              <div class="stat-label">기타 비율</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="emptyState" class="empty-state" style="display: none;">
+      <h3>📊 아직 분석할 데이터가 없어요</h3>
+      <p>운동 기록을 작성하면 상세한 신체 분석을 확인할 수 있습니다!</p>
+      <button onclick="window.location.href='login.html'">첫 운동 기록 작성하기</button>
+    </div>
+  </div>
+
+  <script>
+    let combinedChart, bodyFatChart, muscleChart, compositionChart;
+    let workoutLogs = [];
+
+    function loadData() {
+      const savedLogs = localStorage.getItem('workoutLogs');
+      if (savedLogs) {
+        workoutLogs = JSON.parse(savedLogs);
+      } else {
+        workoutLogs = generateDemoData();
+      }
+
+      if (workoutLogs.length === 0) {
+        document.getElementById('emptyState').style.display = 'block';
+        document.querySelectorAll('.chart-card, .controls').forEach(el => el.style.display = 'none');
+        return;
+      }
+
+      document.getElementById('emptyState').style.display = 'none';
+      renderAllCharts();
+    }
+
+    function generateDemoData() {
+      const demoData = [];
+      const startDate = new Date();
+      startDate.setMonth(startDate.getMonth() - 6);
+
+      for (let i = 0; i < 50; i++) {
+        const date = new Date(startDate);
+        date.setDate(date.getDate() + i * 3);
+        
+        const baseWeight = 70;
+        const weightTrend = -0.1 * i; // 점진적 감소
+        const randomWeight = (Math.random() - 0.5) * 2;
+        
+        const baseBodyFat = 25;
+        const fatTrend = -0.15 * i; // 체지방 감소
+        const randomFat = (Math.random() - 0.5) * 1;
+        
+        const baseMuscle = 42;
+        const muscleTrend = 0.05 * i; // 근량 증가
+        const randomMuscle = (Math.random() - 0.5) * 0.5;
+
+        demoData.push({
+          id: `demo_${i}`,
+          date: date.toISOString().slice(0, 10),
+          weight: Math.max(50, baseWeight + weightTrend + randomWeight),
+          bodyFat: Math.max(10, Math.min(35, baseBodyFat + fatTrend + randomFat)),
+          muscleMass: Math.max(30, baseMuscle + muscleTrend + randomMuscle),
+          workoutTypes: ['유산소', '근력', '요가'][Math.floor(Math.random() * 3)],
+          duration: 30 + Math.floor(Math.random() * 90),
+          intensity: ['낮음', '보통', '높음'][Math.floor(Math.random() * 3)],
+          workoutDetails: `데모 운동 ${i + 1}`,
+          notes: `운동 ${i + 1}일차 기록`
+        });
+      }
+      return demoData;
+    }
+
+    function getFilteredData() {
+      const period = document.getElementById('periodSelect').value;
+      const startDate = document.getElementById('startDate').value;
+      const endDate = document.getElementById('endDate').value;
+      
+      let filtered = workoutLogs.filter(log => log.weight && log.bodyFat && log.muscleMass);
+      
+      if (period !== 'all') {
+        const cutoffDate = new Date();
+        cutoffDate.setDate(cutoffDate.getDate() - parseInt(period));
+        filtered = filtered.filter(log => new Date(log.date) >= cutoffDate);
+      }
+      
+      if (startDate) {
+        filtered = filtered.filter(log => log.date >= startDate);
+      }
+      
+      if (endDate) {
+        filtered = filtered.filter(log => log.date <= endDate);
+      }
+      
+      return filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
+    }
+
+    function updateStats(data) {
+      if (data.length === 0) return;
+      
+      const weights = data.map(d => d.weight);
+      const bodyFats = data.map(d => d.bodyFat);
+      const muscles = data.map(d => d.muscleMass);
+      
+      const avgWeight = (weights.reduce((a, b) => a + b, 0) / weights.length).toFixed(1);
+      const avgBodyFat = (bodyFats.reduce((a, b) => a + b, 0) / bodyFats.length).toFixed(1);
+      const avgMuscle = (muscles.reduce((a, b) => a + b, 0) / muscles.length).toFixed(1);
+      
+      const weightChange = data.length > 1 ? (weights[weights.length - 1] - weights[0]).toFixed(1) : 0;
+      const bodyFatChange = data.length > 1 ? (bodyFats[bodyFats.length - 1] - bodyFats[0]).toFixed(1) : 0;
+      const muscleChange = data.length > 1 ? (muscles[muscles.length - 1] - muscles[0]).toFixed(1) : 0;
+      
+      const minWeight = Math.min(...weights).toFixed(1);
+      const maxWeight = Math.max(...weights).toFixed(1);
+      const minBodyFat = Math.min(...bodyFats).toFixed(1);
+      const maxBodyFat = Math.max(...bodyFats).toFixed(1);
+      const minMuscle = Math.min(...muscles).toFixed(1);
+      const maxMuscle = Math.max(...muscles).toFixed(1);
+      
+      document.getElementById('avgWeight').textContent = avgWeight + 'kg';
+      document.getElementById('avgBodyFat').textContent = avgBodyFat + '%';
+      document.getElementById('avgMuscle').textContent = avgMuscle + 'kg';
+      document.getElementById('totalChange').textContent = 
+        (parseFloat(weightChange) > 0 ? '+' : '') + weightChange + 'kg';
+      
+      document.getElementById('minBodyFat').textContent = minBodyFat + '%';
+      document.getElementById('maxBodyFat').textContent = maxBodyFat + '%';
+      document.getElementById('bodyFatChange').textContent = 
+        (parseFloat(bodyFatChange) > 0 ? '+' : '') + bodyFatChange + '%';
+      
+      document.getElementById('minMuscle').textContent = minMuscle + 'kg';
+      document.getElementById('maxMuscle').textContent = maxMuscle + 'kg';
+      document.getElementById('muscleChange').textContent = 
+        (parseFloat(muscleChange) > 0 ? '+' : '') + muscleChange + 'kg';
+      
+      if (data.length > 0) {
+        const latest = data[data.length - 1];
+        const muscleRatio = ((latest.muscleMass / latest.weight) * 100).toFixed(1);
+        const fatRatio = latest.bodyFat.toFixed(1);
+        const otherRatio = (100 - parseFloat(muscleRatio) - parseFloat(fatRatio)).toFixed(1);
+        
+        document.getElementById('muscleRatio').textContent = muscleRatio + '%';
+        document.getElementById('fatRatio').textContent = fatRatio + '%';
+        document.getElementById('otherRatio').textContent = otherRatio + '%';
+      }
+    }
+
+    function renderCombinedChart(data) {
+      const ctx = document.getElementById('combinedChart').getContext('2d');
+      const chartType = document.getElementById('chartType').value;
+      
+      if (combinedChart) combinedChart.destroy();
+      
+      const labels = data.map(d => new Date(d.date).toLocaleDateString());
+      
+      combinedChart = new Chart(ctx, {
+        type: chartType,
+        data: {
+          labels,
+          datasets: [
+            {
+              label: '몸무게 (kg)',
+              data: data.map(d => d.weight),
+              borderColor: '#3b82f6',
+              backgroundColor: chartType === 'area' ? 'rgba(59, 130, 246, 0.1)' : '#3b82f6',
+              borderWidth: 3,
+              fill: chartType === 'area',
+              tension: 0.4,
+              yAxisID: 'y'
+            },
+            {
+              label: '체지방률 (%)',
+              data: data.map(d => d.bodyFat),
+              borderColor: '#f59e0b',
+              backgroundColor: chartType === 'area' ? 'rgba(245, 158, 11, 0.1)' : '#f59e0b',
+              borderWidth: 3,
+              fill: chartType === 'area',
+              tension: 0.4,
+              yAxisID: 'y1'
+            },
+            {
+              label: '근량 (kg)',
+              data: data.map(d => d.muscleMass),
+              borderColor: '#10b981',
+              backgroundColor: chartType === 'area' ? 'rgba(16, 185, 129, 0.1)' : '#10b981',
+              borderWidth: 3,
+              fill: chartType === 'area',
+              tension: 0.4,
+              yAxisID: 'y'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false,
+          },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                font: { family: 'SBAggroB', size: 12 },
+                usePointStyle: true,
+                pointStyle: 'circle'
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleFont: { family: 'SBAggroB' },
+              bodyFont: { family: 'SBAggroB' },
+              cornerRadius: 8
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: '#f1f5f9' },
+              ticks: { font: { family: 'SBAggroB' } }
+            },
+            y: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+              grid: { color: '#f1f5f9' },
+              ticks: { font: { family: 'SBAggroB' } },
+              title: {
+                display: true,
+                text: '몸무게 / 근량 (kg)',
+                font: { family: 'SBAggroB' }
+              }
+            },
+            y1: {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              grid: { drawOnChartArea: false },
+              ticks: { font: { family: 'SBAggroB' } },
+              title: {
+                display: true,
+                text: '체지방률 (%)',
+                font: { family: 'SBAggroB' }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function renderBodyFatChart(data) {
+      const ctx = document.getElementById('bodyFatChart').getContext('2d');
+      
+      if (bodyFatChart) bodyFatChart.destroy();
+      
+      const labels = data.map(d => new Date(d.date).toLocaleDateString());
+      
+      bodyFatChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: '체지방률 (%)',
+            data: data.map(d => d.bodyFat),
+            borderColor: '#f59e0b',
+            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#f59e0b',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(245, 158, 11, 0.9)',
+              titleFont: { family: 'SBAggroB' },
+              bodyFont: { family: 'SBAggroB' }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: '#f1f5f9' },
+              ticks: { font: { family: 'SBAggroB' } }
+            },
+            y: {
+              grid: { color: '#f1f5f9' },
+              ticks: { font: { family: 'SBAggroB' } }
+            }
+          }
+        }
+      });
+    }
+
+    function renderMuscleChart(data) {
+      const ctx = document.getElementById('muscleChart').getContext('2d');
+      
+      if (muscleChart) muscleChart.destroy();
+      
+      const labels = data.map(d => new Date(d.date).toLocaleDateString());
+      
+      muscleChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: '근량 (kg)',
+            data: data.map(d => d.muscleMass),
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#10b981',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(16, 185, 129, 0.9)',
+              titleFont: { family: 'SBAggroB' },
+              bodyFont: { family: 'SBAggroB' }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: '#f1f5f9' },
+              ticks: { font: { family: 'SBAggroB' } }
+            },
+            y: {
+              grid: { color: '#f1f5f9' },
+              ticks: { font: { family: 'SBAggroB' } }
+            }
+          }
+        }
+      });
+    }
+
+    function renderCompositionChart(data) {
+      const ctx = document.getElementById('compositionChart').getContext('2d');
+      
+      if (compositionChart) compositionChart.destroy();
+      
+      if (data.length === 0) return;
+      
+      const latest = data[data.length - 1];
+      const muscleRatio = (latest.muscleMass / latest.weight) * 100;
+      const fatRatio = latest.bodyFat;
+      const otherRatio = 100 - muscleRatio - fatRatio;
+      
+      compositionChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['근량', '체지방', '기타 (뼈, 수분 등)'],
+          datasets: [{
+            data: [muscleRatio, fatRatio, otherRatio],
+            backgroundColor: [
+              '#10b981',
+              '#f59e0b', 
+              '#6b7280'
+            ],
+            borderWidth: 3,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                font: { family: 'SBAggroB' },
+                padding: 20,
+                usePointStyle: true
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleFont: { family: 'SBAggroB' },
+              bodyFont: { family: 'SBAggroB' },
+              callbacks: {
+                label: function(context) {
+                  return context.label + ': ' + context.parsed.toFixed(1) + '%';
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function renderAllCharts() {
+      const filteredData = getFilteredData();
+      
+      if (filteredData.length === 0) {
+        document.getElementById('emptyState').style.display = 'block';
+        document.querySelectorAll('.chart-card').forEach(el => el.style.display = 'none');
+        return;
+      }
+
+      document.getElementById('emptyState').style.display = 'none';
+      document.querySelectorAll('.chart-card').forEach(el => el.style.display = 'block');
+      
+      updateStats(filteredData);
+      renderCombinedChart(filteredData);
+      renderBodyFatChart(filteredData);
+      renderMuscleChart(filteredData);
+      renderCompositionChart(filteredData);
+    }
+
+    // 이벤트 리스너
+    document.getElementById('periodSelect').addEventListener('change', renderAllCharts);
+    document.getElementById('startDate').addEventListener('change', renderAllCharts);
+    document.getElementById('endDate').addEventListener('change', renderAllCharts);
+    document.getElementById('chartType').addEventListener('change', renderAllCharts);
+
+    // 초기 로드
+    loadData();

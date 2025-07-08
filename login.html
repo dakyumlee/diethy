@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>관리자 로그인</title>
+  <title>관리자 로그인 | 현영이 피트니스</title>
   <style>
    @font-face {
     font-family: 'SBAggroB';
@@ -20,7 +20,7 @@
 
     body {
       font-family: 'SBAggroB';
-      background: #f8fafc;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -29,14 +29,15 @@
       color: #1e293b;
     }
 
-    .container {
-      background: white;
-      border-radius: 16px;
+    .login-container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
       padding: 40px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      max-width: 400px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      max-width: 450px;
       width: 100%;
-      border: 1px solid #e2e8f0;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       text-align: center;
     }
 
@@ -44,95 +45,109 @@
       margin-bottom: 32px;
     }
 
+    .login-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
     .login-header h2 {
-      color: #0f172a;
-      font-size: 1.8rem;
+      color: #2d3748;
+      font-size: 2rem;
       font-weight: 700;
       margin-bottom: 8px;
     }
 
     .login-header p {
-      color: #6b7280;
-      font-size: 0.9rem;
+      color: #4a5568;
+      font-size: 1rem;
     }
 
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 24px;
       text-align: left;
     }
 
     .form-group label {
       display: block;
-      margin-bottom: 6px;
-      color: #374151;
+      margin-bottom: 8px;
+      color: #2d3748;
       font-weight: 500;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
     }
 
     input[type="email"], input[type="password"] {
       width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
+      padding: 16px 20px;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
       font-size: 1rem;
-      background: white;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      background: rgba(255, 255, 255, 0.8);
+      transition: all 0.3s ease;
       font-family: 'SBAggroB';
     }
 
     input:focus {
       outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      background: white;
     }
 
     input::placeholder {
       color: #9ca3af;
     }
 
-    button {
+    .login-btn {
       width: 100%;
-      padding: 14px;
-      background: #3b82f6;
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
       border: none;
-      border-radius: 8px;
-      font-size: 1rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
       font-family: 'SBAggroB';
       margin-top: 8px;
     }
 
-    button:hover {
-      background: #2563eb;
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
     }
 
-    button:active {
+    .login-btn:active {
       transform: scale(0.98);
     }
 
-    button:disabled {
+    .login-btn:disabled {
       background: #9ca3af;
       cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
 
     .nav-link {
-      margin-top: 24px;
+      margin-top: 32px;
       padding-top: 24px;
-      border-top: 1px solid #e5e7eb;
+      border-top: 1px solid rgba(226, 232, 240, 0.6);
     }
 
     .nav-link a {
-      color: #6b7280;
+      color: #667eea;
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       transition: color 0.2s ease;
+      font-weight: 500;
     }
 
     .nav-link a:hover {
-      color: #3b82f6;
+      color: #5a67d8;
     }
 
     .loading {
@@ -150,52 +165,147 @@
     }
 
     .error-message {
-      background: #fef2f2;
+      background: rgba(254, 242, 242, 0.9);
       border: 1px solid #fecaca;
       color: #dc2626;
-      padding: 12px;
+      padding: 12px 16px;
       border-radius: 8px;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       font-size: 0.9rem;
       display: none;
+      text-align: left;
+    }
+
+    .quick-login {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(226, 232, 240, 0.6);
+    }
+
+    .quick-login h4 {
+      color: #4a5568;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+
+    .demo-btn {
+      width: 100%;
+      padding: 12px;
+      background: rgba(16, 185, 129, 0.1);
+      color: #047857;
+      border: 1px solid #10b981;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'SBAggroB';
+    }
+
+    .demo-btn:hover {
+      background: rgba(16, 185, 129, 0.2);
+    }
+
+    .features-preview {
+      margin-top: 24px;
+      text-align: left;
+    }
+
+    .features-preview h4 {
+      color: #2d3748;
+      font-size: 1rem;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .feature-list li {
+      padding: 8px 0;
+      color: #4a5568;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feature-icon {
+      font-size: 1.1rem;
     }
 
     @media (max-width: 480px) {
-      .container {
+      .login-container {
         padding: 24px 20px;
         margin: 10px;
       }
 
       .login-header h2 {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
+      }
+
+      .login-icon {
+        font-size: 3rem;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="login-container">
     <div class="login-header">
-      <h2>🔐 관리자 로그인</h2>
-      <p>관리자 권한이 필요한 페이지입니다</p>
+      <div class="login-icon">🏋️‍♀️</div>
+      <h2>피트니스 관리자</h2>
+      <p>운동 기록 및 관리 시스템</p>
     </div>
 
     <div id="errorMessage" class="error-message"></div>
 
     <form id="loginForm">
       <div class="form-group">
-        <label for="email">이메일</label>
-        <input type="email" id="email" placeholder="admin@example.com" required />
+        <label for="email">📧 이메일</label>
+        <input type="email" id="email" placeholder="admin@fitness.com" required />
       </div>
 
       <div class="form-group">
-        <label for="password">비밀번호</label>
+        <label for="password">🔒 비밀번호</label>
         <input type="password" id="password" placeholder="비밀번호를 입력하세요" required />
       </div>
 
-      <button type="submit" id="loginBtn">
-        <span class="btn-text">로그인</span>
+      <button type="submit" id="loginBtn" class="login-btn">
+        <span class="btn-text">🚀 로그인</span>
       </button>
     </form>
+
+    <div class="quick-login">
+      <h4>🎯 데모 모드로 체험하기</h4>
+      <button class="demo-btn" onclick="demoLogin()">
+        ✨ 데모 계정으로 바로 시작하기
+      </button>
+    </div>
+
+    <div class="features-preview">
+      <h4>💪 주요 기능</h4>
+      <ul class="feature-list">
+        <li>
+          <span class="feature-icon">📝</span>
+          <span>상세한 운동 기록 및 체성분 관리</span>
+        </li>
+        <li>
+          <span class="feature-icon">📊</span>
+          <span>몸무게, 체지방, 근량 변화 추적</span>
+        </li>
+        <li>
+          <span class="feature-icon">🎯</span>
+          <span>목표 설정 및 달성률 관리</span>
+        </li>
+        <li>
+          <span class="feature-icon">🏆</span>
+          <span>성취 배지 및 동기부여 시스템</span>
+        </li>
+      </ul>
+    </div>
 
     <div class="nav-link">
       <a href="index.html">← 메인 페이지로 돌아가기</a>
@@ -237,9 +347,119 @@
         btnText.innerHTML = '<div class="loading"></div> 로그인 중...';
         loginBtn.disabled = true;
       } else {
-        btnText.innerHTML = '로그인';
+        btnText.innerHTML = '🚀 로그인';
         loginBtn.disabled = false;
       }
+    }
+
+    window.demoLogin = function() {
+      if (!localStorage.getItem('workoutLogs')) {
+        const demoData = generateDemoWorkoutData();
+        localStorage.setItem('workoutLogs', JSON.stringify(demoData));
+      }
+      
+      if (!localStorage.getItem('fitnessGoals')) {
+        const demoGoals = generateDemoGoals();
+        localStorage.setItem('fitnessGoals', JSON.stringify(demoGoals));
+      }
+
+      showSuccessMessage("✅ 데모 모드로 로그인되었습니다!");
+      setTimeout(() => {
+        window.location.href = "workout-admin.html";
+      }, 1500);
+    };
+
+    function generateDemoWorkoutData() {
+      const workoutTypes = ['유산소', '근력', '요가', '스트레칭', '수영', '사이클'];
+      const intensities = ['낮음', '보통', '높음', '매우높음'];
+      const demoData = [];
+      
+      for (let i = 0; i < 30; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() - i * 2);
+        
+        const type = workoutTypes[Math.floor(Math.random() * workoutTypes.length)];
+        const duration = 30 + Math.floor(Math.random() * 90);
+        const intensity = intensities[Math.floor(Math.random() * intensities.length)];
+        
+        const baseWeight = 70;
+        const weightTrend = -0.1 * i;
+        const baseBodyFat = 25;
+        const fatTrend = -0.15 * i;
+        const baseMuscle = 42;
+        const muscleTrend = 0.05 * i;
+        
+        demoData.push({
+          id: `demo_${i}`,
+          date: date.toISOString().slice(0, 10),
+          weight: Math.max(50, baseWeight + weightTrend + (Math.random() - 0.5) * 2),
+          bodyFat: Math.max(10, Math.min(35, baseBodyFat + fatTrend + (Math.random() - 0.5) * 1)),
+          muscleMass: Math.max(30, baseMuscle + muscleTrend + (Math.random() - 0.5) * 0.5),
+          workoutTypes: type,
+          duration: duration,
+          intensity: intensity,
+          workoutDetails: `${type} 운동 ${duration}분 진행. ${intensity} 강도로 실시했습니다.`,
+          notes: `${i + 1}일차 운동 완료! 오늘 컨디션이 좋았습니다.`,
+          timestamp: date.toISOString()
+        });
+      }
+      return demoData;
+    }
+
+    function generateDemoGoals() {
+      return [
+        {
+          id: 'demo_goal_1',
+          type: 'weight',
+          name: '여름까지 5kg 감량',
+          period: 90,
+          currentValue: 70,
+          targetValue: 65,
+          description: '건강한 다이어트로 목표 체중 달성하기',
+          createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+          deadline: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
+          completed: false
+        },
+        {
+          id: 'demo_goal_2',
+          type: 'bodyfat',
+          name: '체지방률 20% 달성',
+          period: 120,
+          currentValue: 25,
+          targetValue: 20,
+          description: '꾸준한 운동으로 체지방 감소',
+          createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
+          deadline: new Date(Date.now() + 100 * 24 * 60 * 60 * 1000).toISOString(),
+          completed: false
+        }
+      ];
+    }
+
+    function showSuccessMessage(message) {
+      const successDiv = document.createElement('div');
+      successDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 16px 24px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        z-index: 1000;
+        font-family: 'SBAggroB';
+        font-weight: 500;
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+      `;
+      successDiv.textContent = message;
+      document.body.appendChild(successDiv);
+      
+      setTimeout(() => successDiv.style.transform = 'translateX(0)', 100);
+      setTimeout(() => {
+        successDiv.style.transform = 'translateX(400px)';
+        setTimeout(() => document.body.removeChild(successDiv), 300);
+      }, 3000);
     }
 
     loginForm.addEventListener("submit", async (e) => {
@@ -257,7 +477,10 @@
 
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = "admin.html";
+        showSuccessMessage("✅ 로그인 성공!");
+        setTimeout(() => {
+          window.location.href = "workout-admin.html";
+        }, 1000);
       } catch (error) {
         console.error("로그인 실패:", error);
         
@@ -274,6 +497,9 @@
             break;
           case 'auth/too-many-requests':
             errorMsg = "너무 많은 시도가 있었습니다. 잠시 후 다시 시도해주세요.";
+            break;
+          case 'auth/invalid-credential':
+            errorMsg = "이메일 또는 비밀번호가 올바르지 않습니다.";
             break;
         }
         
@@ -293,6 +519,18 @@
       if (e.key === "Enter") {
         loginForm.dispatchEvent(new Event("submit"));
       }
+    });
+
+    window.addEventListener('load', () => {
+      const container = document.querySelector('.login-container');
+      container.style.opacity = '0';
+      container.style.transform = 'translateY(20px)';
+      container.style.transition = 'all 0.6s ease';
+      
+      setTimeout(() => {
+        container.style.opacity = '1';
+        container.style.transform = 'translateY(0)';
+      }, 100);
     });
   </script>
 </body>

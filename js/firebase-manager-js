@@ -1,0 +1,474 @@
+import { db } from './firebase.js';
+import {
+  collection, addDoc, getDocs, deleteDoc, updateDoc, doc, Timestamp, query, orderBy, where, limit
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+const workoutLogsRef = collection(db, "workoutLogs");
+const goalsRef = collection(db, "fitnessGoals");
+const achievementsRef = collection(db, "achievements");
+
+export class WorkoutManager {
+  static async addWorkout(workoutData) {
+    try {
+      const docRef = await addDoc(workoutLogsRef, {
+        ...workoutData,
+        date: Timestamp.fromDate(new Date(workoutData.date)),
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now()
+      });
+      console.log("운동 기록 추가됨:", docRef.id);
+      return docRef.id;
+    } catch (error) {
+      console.error("운동 기록 추가 실패:", error);
+      throw error;
+    }
+  }
+
+  static async getAllWorkouts() {
+    try {
+      const q = query(workoutLogsRef, orderBy("date", "desc"));
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        date: doc.data().date?.toDate() || new Date(),
+        createdAt: doc.data().createdAt?.toDate() || new Date(),
+        updatedAt: doc.data().updatedAt?.toDate() || new Date()
+      }));
+    } catch (error) {
+      console.error("운동 기록 조회 실패:", error);
+      throw error;
+    }
+  }
+
+  static async getWorkoutsByPeriod(days) {
+    try {
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - days);
+      
+      const q = query(
+        workoutLogsRef,
+        where("date", ">=", Timestamp.fromDate(startDate)),
+        orderBy("date", "desc")
+      );
+      
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        date: doc.data().date?.toDate() || new Date()
+      }));
+    } catch (error) {
+      console.error("기간별 운동 기록 조회 실패:", error);
+      throw error;
+    }
+  }
+
+  static async updateWorkout(id, updateData) {
+    try {
+      const docRef = doc(db, "workoutLogs", id);
+      await updateDoc(docRef, {
+        ...updateData,
+        date: updateData.date ? Timestamp.fromDate(new Date(updateData.date)) : undefined,
+        updatedAt: Timestamp.now()
+      });
+      console.log("운동 기록 업데이트됨:", id);
+    } catch (error) {
+      console.error("운동 기록 업데이트 실패:", error);
+      throw error;
+    }
+  }
+
+  static async deleteWorkout(id) {
+    try {
+      await deleteDoc(doc(db, "workoutLogs", id));
+      console.log("운동 기록 삭제됨:", id);
+    } catch (error) {
+      console.error("운동 기록 삭제 실패:", error);
+      throw error;
+    }
+  }
+
+  static async getWorkoutStats() {
+    try {
+      const workouts = await this.getAllWorkouts();
+      
+      if (workouts.length === 0) {
+        return {
+          totalWorkouts: 0,
+          totalHours: 0,
+          avgIntensity: 0,
+          streak: 0,
+          favoriteWorkout: null
+        };
+      }
+
+      const totalWorkouts = workouts.length;
+      const totalMinutes = workouts.reduce((sum, w) => sum + (w.duration || 0), 0);
+      const totalHours = Math.round(totalMinutes / 60 * 10) / 10;
+
+      const intensityMap = { '낮음': 1, '보통': 2, '높음': 3, '매우높음': 4 };
+      const avgIntensityValue = workouts.reduce((sum, w) => 
+        sum + (intensityMap[w.intensity] || 0), 0) / totalWorkouts;
+      const avgIntensity = Object.keys(intensityMap).find(key => 
+        intensityMap[key] === Math.round(avgIntensityValue)) || '보통';
+
+      const streak = this.calculateStreak(workouts);
+
+      const workoutTypeCount = {};
+      workouts.forEach(w => {
+        if (w.workoutTypes) {
+          workoutTypeCount[w.workoutTypes] = (workoutTypeCount[w.workoutTypes] || 0) + 1;
+        }
+      });
+      const favoriteWorkout = Object.keys(workoutTypeCount).reduce((a, b) => 
+        workoutTypeCount[a] > workoutTypeCount[b] ? a : b, null);
+
+      return {
+        totalWorkouts,
+        totalHours,
+        avgIntensity,
+        streak,
+        favoriteWorkout
+      };
+    } catch (error) {
+      console.error("통계 계산 실패:", error);
+      throw error;
+    }
+  }
+
+  static calculateStreak(workouts) {
+    if (workouts.length === 0) return 0;
+    
+    const sortedDates = workouts.map(w => new Date(w.date)).sort((a, b) => b - a);
+    const today = new Date();
+    let streak = 0;
+    
+    for (let i = 0; i < sortedDates.length; i++) {
+      const daysDiff = Math.floor((today - sortedDates[i]) / (1000 * 60 * 60 * 24));
+      if (daysDiff === i) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+    
+    return streak;
+  }
+}
+
+export class GoalManager {
+  static async addGoal(goalData) {
+    try {
+      const docRef = await addDoc(goalsRef, {
+        ...goalData,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+        deadline: Timestamp.fromDate(new Date(goalData.deadline))
+      });
+      console.log("목표 추가됨:", docRef.id);
+      return docRef.id;
+    } catch (error) {
+      console.error("목표 추가 실패:", error);
+      throw error;
+    }
+  }
+  static async getAllGoals() {
+    try {
+      const q = query(goalsRef, orderBy("createdAt", "desc"));
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate() || new Date(),
+        deadline: doc.data().deadline?.toDate() || new Date()
+      }));
+    } catch (error) {
+      console.error("목표 조회 실패:", error);
+      throw error;
+    }
+  }
+
+  static async updateGoal(id, updateData) {
+    try {
+      const docRef = doc(db, "fitnessGoals", id);
+      await updateDoc(docRef, {
+        ...updateData,
+        updatedAt: Timestamp.now(),
+        deadline: updateData.deadline ? Timestamp.fromDate(new Date(updateData.deadline)) : undefined
+      });
+      console.log("목표 업데이트됨:", id);
+    } catch (error) {
+      console.error("목표 업데이트 실패:", error);
+      throw error;
+    }
+  }
+
+  static async deleteGoal(id) {
+    try {
+      await deleteDoc(doc(db, "fitnessGoals", id));
+      console.log("목표 삭제됨:", id);
+    } catch (error) {
+      console.error("목표 삭제 실패:", error);
+      throw error;
+    }
+  }
+
+  static async calculateGoalProgress(goal, workouts) {
+    if (!workouts || workouts.length === 0) return 0;
+
+    const latestWorkout = workouts.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+    
+    let currentValue;
+    switch (goal.type) {
+      case 'weight':
+        currentValue = latestWorkout.weight || goal.currentValue;
+        break;
+      case 'bodyfat':
+        currentValue = latestWorkout.bodyFat || goal.currentValue;
+        break;
+      case 'muscle':
+        currentValue = latestWorkout.muscleMass || goal.currentValue;
+        break;
+      case 'exercise':
+        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        currentValue = workouts.filter(w => new Date(w.date) >= weekAgo).length;
+        break;
+      default:
+        currentValue = goal.currentValue;
+    }
+
+    const totalChange = Math.abs(goal.targetValue - goal.currentValue);
+    const currentChange = Math.abs(currentValue - goal.currentValue);
+    
+    return Math.min(100, (currentChange / totalChange) * 100);
+  }
+}
+
+export class AchievementManager {
+  static async addAchievement(achievementData) {
+    try {
+      const docRef = await addDoc(achievementsRef, {
+        ...achievementData,
+        unlockedAt: Timestamp.now()
+      });
+      console.log("성취 기록 추가됨:", docRef.id);
+      return docRef.id;
+    } catch (error) {
+      console.error("성취 기록 추가 실패:", error);
+      throw error;
+    }
+  }
+
+  static async getUserAchievements(userId) {
+    try {
+      const q = query(achievementsRef, where("userId", "==", userId));
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        unlockedAt: doc.data().unlockedAt?.toDate() || new Date()
+      }));
+    } catch (error) {
+      console.error("성취 조회 실패:", error);
+      throw error;
+    }
+  }
+
+  static async checkAchievements(userId, workouts, goals) {
+    const newAchievements = [];
+
+    try {
+      const existingAchievements = await this.getUserAchievements(userId);
+      const achievementIds = existingAchievements.map(a => a.achievementId);
+
+      if (goals.length >= 1 && !achievementIds.includes('firstGoal')) {
+        newAchievements.push({
+          userId,
+          achievementId: 'firstGoal',
+          title: '첫 목표 설정',
+          description: '첫 번째 목표를 설정했습니다',
+          icon: '🎯'
+        });
+      }
+
+      const completedGoals = goals.filter(g => 
+        GoalManager.calculateGoalProgress(g, workouts) >= 100
+      );
+      if (completedGoals.length >= 1 && !achievementIds.includes('firstComplete')) {
+        newAchievements.push({
+          userId,
+          achievementId: 'firstComplete',
+          title: '목표 달성자',
+          description: '첫 번째 목표를 달성했습니다',
+          icon: '✅'
+        });
+      }
+
+      const streak = WorkoutManager.calculateStreak(workouts);
+      if (streak >= 7 && !achievementIds.includes('streak7')) {
+        newAchievements.push({
+          userId,
+          achievementId: 'streak7',
+          title: '일주일 연속',
+          description: '7일 연속 운동했습니다',
+          icon: '🔥'
+        });
+      }
+
+      if (workouts.length >= 50 && !achievementIds.includes('workout50')) {
+        newAchievements.push({
+          userId,
+          achievementId: 'workout50',
+          title: '운동 중독자',
+          description: '총 50회 운동을 완료했습니다',
+          icon: '💪'
+        });
+      }
+      for (const achievement of newAchievements) {
+        await this.addAchievement(achievement);
+      }
+
+      return newAchievements;
+    } catch (error) {
+      console.error("성취 확인 실패:", error);
+      throw error;
+    }
+  }
+}
+
+export class BackupManager {
+  static async backupAllData() {
+    try {
+      const workouts = await WorkoutManager.getAllWorkouts();
+      const goals = await GoalManager.getAllGoals();
+      
+      const backupData = {
+        version: '1.0',
+        timestamp: new Date().toISOString(),
+        workouts,
+        goals
+      };
+
+      const blob = new Blob([JSON.stringify(backupData, null, 2)], {
+        type: 'application/json'
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `fitness-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      console.log("백업 완료");
+    } catch (error) {
+      console.error("백업 실패:", error);
+      throw error;
+    }
+  }
+
+  static async restoreFromFile(file) {
+    try {
+      const text = await file.text();
+      const backupData = JSON.parse(text);
+
+      if (!backupData.workouts || !backupData.goals) {
+        throw new Error("올바르지 않은 백업 파일 형식입니다.");
+      }
+
+      for (const workout of backupData.workouts) {
+        const { id, createdAt, updatedAt, ...workoutData } = workout;
+        await WorkoutManager.addWorkout(workoutData);
+      }
+
+      for (const goal of backupData.goals) {
+        const { id, createdAt, updatedAt, ...goalData } = goal;
+        await GoalManager.addGoal(goalData);
+      }
+
+      console.log("복원 완료");
+      return true;
+    } catch (error) {
+      console.error("복원 실패:", error);
+      throw error;
+    }
+  }
+
+  static async exportToCSV() {
+    try {
+      const workouts = await WorkoutManager.getAllWorkouts();
+      
+      const headers = [
+        '날짜', '몸무게(kg)', '체지방(%)', '근량(kg)', 
+        '운동종류', '운동시간(분)', '강도', '운동내용', '메모'
+      ];
+
+      const csvContent = [
+        headers.join(','),
+        ...workouts.map(w => [
+          w.date.toISOString().slice(0, 10),
+          w.weight || '',
+          w.bodyFat || '',
+          w.muscleMass || '',
+          w.workoutTypes || '',
+          w.duration || '',
+          w.intensity || '',
+          `"${(w.workoutDetails || '').replace(/"/g, '""')}"`,
+          `"${(w.notes || '').replace(/"/g, '""')}"`
+        ].join(','))
+      ].join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `workout-log-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      console.log("CSV 내보내기 완료");
+    } catch (error) {
+      console.error("CSV 내보내기 실패:", error);
+      throw error;
+    }
+  }
+}
+
+export class SyncManager {
+  static async syncLocalToFirebase() {
+    try {
+      const localWorkouts = JSON.parse(localStorage.getItem('workoutLogs') || '[]');
+      const localGoals = JSON.parse(localStorage.getItem('fitnessGoals') || '[]');
+
+      for (const workout of localWorkouts) {
+        const { id, timestamp, ...workoutData } = workout;
+        await WorkoutManager.addWorkout(workoutData);
+      }
+
+      for (const goal of localGoals) {
+        const { id, ...goalData } = goal;
+        await GoalManager.addGoal(goalData);
+      }
+
+      console.log("로컬 데이터를 Firebase에 동기화 완료");
+    } catch (error) {
+      console.error("동기화 실패:", error);
+      throw error;
+    }
+  }
+
+  static async syncFirebaseToLocal() {
+    try {
+      const workouts = await WorkoutManager.getAllWorkouts();
+      const goals = await GoalManager.getAllGoals();
+
+      localStorage.setItem('workoutLogs', JSON.stringify(workouts));
+      localStorage.setItem('fitnessGoals', JSON.stringify(goals));
+
+      console.log("Firebase 데이터를 로컬에 동기화 완료");
+    } catch (error) {
+      console.error("동기화 실패:", error);
+      throw error;
+    }
+  }
+}
