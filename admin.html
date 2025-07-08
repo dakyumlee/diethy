@@ -506,6 +506,15 @@
   <script>
     let workoutLogs = JSON.parse(localStorage.getItem('workoutLogs') || '[]');
 
+    import { db } from './js/firebase.js';
+    import {
+      collection, addDoc, getDocs, deleteDoc, updateDoc, doc, Timestamp
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+    const logList = document.getElementById("logList");
+    const colRef = collection(db, "workoutLogs");
+    let logs = [];
+
     document.getElementById('workoutDate').value = new Date().toISOString().slice(0, 10);
 
     document.querySelectorAll('.workout-btn').forEach(btn => {
@@ -521,7 +530,7 @@
       document.getElementById('workoutTypes').value = activeTypes.join(', ');
     }
 
-      document.getElementById('saveWorkoutBtn').onclick = async () => {
+    document.getElementById('saveWorkoutBtn').onclick = async () => {
       const workoutData = {
         date: document.getElementById('workoutDate').value,
         weight: parseFloat(document.getElementById('weight').value),
@@ -531,8 +540,7 @@
         workoutDetails: document.getElementById('workoutDetails').value,
         duration: parseInt(document.getElementById('duration').value),
         intensity: document.getElementById('intensity').value,
-        notes: document.getElementById('notes').value,
-        timestamp: new Date().toISOString()
+        notes: document.getElementById('notes').value
       };
 
       if (!workoutData.date) {
@@ -557,9 +565,17 @@
       saveBtn.disabled = true;
 
       try {
-        workoutData.id = Date.now().toString();
-        workoutLogs.unshift(workoutData);
-        localStorage.setItem('workoutLogs', JSON.stringify(workoutLogs));
+        await addDoc(colRef, {
+          date: Timestamp.fromDate(new Date(workoutData.date)),
+          weight: workoutData.weight || 0,
+          bodyFat: workoutData.bodyFat || 0,
+          muscleMass: workoutData.muscleMass || 0,
+          workoutTypes: workoutData.workoutTypes || '기록없음',
+          workoutDetails: workoutData.workoutDetails || '기록없음',
+          duration: workoutData.duration || 0,
+          intensity: workoutData.intensity || '보통',
+          notes: workoutData.notes || '기록없음'
+        });
 
         alert('✅ 운동 기록이 성공적으로 저장되었습니다!');
         
@@ -570,7 +586,7 @@
         document.querySelectorAll('.workout-btn').forEach(btn => btn.classList.remove('active'));
         updateWorkoutTypes();
 
-        renderLogs();
+        loadLogs();
 
       } catch (error) {
         console.error('저장 실패:', error);
@@ -581,28 +597,56 @@
       }
     };
 
-    function renderLogs() {
-      const logList = document.getElementById('logList');
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-      
-      let filteredLogs = workoutLogs.filter(log => 
-        log.workoutDetails.toLowerCase().includes(searchTerm) ||
-        log.workoutTypes.toLowerCase().includes(searchTerm) ||
-        log.notes.toLowerCase().includes(searchTerm)
-      );
+    const loadLogs = async () => {
+      try {
+        const snapshot = await getDocs(colRef);
+        logs = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return { 
+            id: doc.id, 
+            ...data, 
+            date: data.date?.toDate ? data.date.toDate() : new Date(data.date),
+            weight: data.weight || 0,
+            bodyFat: data.bodyFat || 0,
+            muscleMass: data.muscleMass || 0,
+            workoutTypes: data.workoutTypes || '기록없음',
+            workoutDetails: data.workoutDetails || '기록없음',
+            duration: data.duration || 0,
+            intensity: data.intensity || '보통',
+            notes: data.notes || '기록없음'
+          };
+        });
+        console.log("로그 로드됨:", logs.length, "개");
+        renderLogs();
+      } catch (error) {
+        console.error("로그 로딩 실패:", error);
+        alert("❌ 데이터를 불러오는데 실패했습니다: " + error.message);
+      }
+    };
 
-      const sortBy = document.getElementById('sortSelect').value;
-      filteredLogs.sort((a, b) => {
-        if (sortBy === 'date-desc') return new Date(b.date) - new Date(a.date);
-        if (sortBy === 'date-asc') return new Date(a.date) - new Date(b.date);
-        if (sortBy === 'weight-desc') return b.weight - a.weight;
-        if (sortBy === 'weight-asc') return a.weight - b.weight;
+    const renderLogs = () => {
+      logList.innerHTML = "";
+      const search = document.getElementById("searchInput").value.toLowerCase();
+      const sort = document.getElementById("sortSelect").value;
+
+      let filtered = logs.filter(log => {
+        const workoutDetails = log.workoutDetails || "";
+        const workoutTypes = log.workoutTypes || "";
+        const notes = log.notes || "";
+        return workoutDetails.toLowerCase().includes(search) ||
+               workoutTypes.toLowerCase().includes(search) ||
+               notes.toLowerCase().includes(search);
+      });
+
+      filtered.sort((a, b) => {
+        if (sort === "date-desc") return b.date - a.date;
+        if (sort === "date-asc") return a.date - b.date;
+        if (sort === "weight-desc") return (b.weight || 0) - (a.weight || 0);
+        if (sort === "weight-asc") return (a.weight || 0) - (b.weight || 0);
         return 0;
       });
 
-      logList.innerHTML = '';
-
-      if (filteredLogs.length === 0) {
+      if (filtered.length === 0) {
         logList.innerHTML = `
           <li style="text-align: center; padding: 40px; color: #6b7280;">
             검색 결과가 없습니다. 첫 운동 기록을 작성해보세요!
@@ -611,28 +655,28 @@
         return;
       }
 
-      filteredLogs.forEach(log => {
-        const li = document.createElement('li');
+      filtered.forEach(log => {
+        const li = document.createElement("li");
         li.innerHTML = `
           <div class="log-header">
-            <div class="log-date">📅 ${new Date(log.date).toLocaleDateString()}</div>
+            <div class="log-date">📅 ${log.date.toLocaleDateString()}</div>
             <div class="log-actions">
-              <button class="edit" onclick="editLog('${log.id}')">수정</button>
-              <button class="delete" onclick="deleteLog('${log.id}')">삭제</button>
+              <button data-id="${log.id}" class="edit">수정</button>
+              <button data-id="${log.id}" class="delete">삭제</button>
             </div>
           </div>
           <div class="log-content">
             <div class="log-item">
               <span class="log-icon">⚖️</span>
-              <span>${log.weight || '-'}kg</span>
+              <span>${log.weight || 0}kg</span>
             </div>
             <div class="log-item">
               <span class="log-icon">🔥</span>
-              <span>체지방 ${log.bodyFat || '-'}%</span>
+              <span>체지방 ${log.bodyFat || 0}%</span>
             </div>
             <div class="log-item">
               <span class="log-icon">💪</span>
-              <span>근량 ${log.muscleMass || '-'}kg</span>
+              <span>근량 ${log.muscleMass || 0}kg</span>
             </div>
             <div class="log-item">
               <span class="log-icon">🏋️‍♀️</span>
@@ -640,13 +684,13 @@
             </div>
             <div class="log-item">
               <span class="log-icon">⏱️</span>
-              <span>${log.duration || '-'}분 (${log.intensity || '강도없음'})</span>
+              <span>${log.duration || 0}분 (${log.intensity || '강도없음'})</span>
             </div>
             <div class="log-item" style="grid-column: 1/-1;">
               <span class="log-icon">📝</span>
               <span>${log.workoutDetails || '기록없음'}</span>
             </div>
-            ${log.notes ? `
+            ${log.notes && log.notes !== '기록없음' ? `
             <div class="log-item" style="grid-column: 1/-1;">
               <span class="log-icon">💭</span>
               <span>${log.notes}</span>
@@ -656,16 +700,23 @@
         `;
         logList.appendChild(li);
       });
-    }
 
-    function deleteLog(id) {
-      if (!confirm('정말 삭제하시겠습니까?')) return;
-      
-      workoutLogs = workoutLogs.filter(log => log.id !== id);
-      localStorage.setItem('workoutLogs', JSON.stringify(workoutLogs));
-      alert('✅ 삭제되었습니다!');
-      renderLogs();
-    }
+      document.querySelectorAll(".delete").forEach(btn => {
+        btn.onclick = async () => {
+          if (!confirm("정말 삭제하시겠습니까?")) return;
+          
+          try {
+            await deleteDoc(doc(db, "workoutLogs", btn.dataset.id));
+            alert("✅ 삭제되었습니다!");
+            loadLogs();
+          } catch (error) {
+            console.error("삭제 실패:", error);
+            alert("❌ 삭제에 실패했습니다.");
+          }
+        };
+      });
+
+    };
 
     document.getElementById('searchInput').oninput = renderLogs;
     document.getElementById('sortSelect').onchange = renderLogs;
@@ -679,12 +730,12 @@
       document.body.classList.add('dark');
     }
 
-    document.getElementById('downloadCSV').onclick = () => {
+    document.getElementById('downloadCSV').onclick = async () => {
       const headers = ['날짜', '몸무게(kg)', '체지방(%)', '근량(kg)', '운동종류', '운동시간(분)', '강도', '운동내용', '메모'];
       const csvContent = [
         headers.join(','),
-        ...workoutLogs.map(log => [
-          log.date,
+        ...logs.map(log => [
+          log.date.toISOString().slice(0, 10),
           log.weight || '',
           log.bodyFat || '',
           log.muscleMass || '',
@@ -703,7 +754,7 @@
       link.click();
     };
 
-    renderLogs();
+    loadLogs();
   </script>
 </body>
 </html>

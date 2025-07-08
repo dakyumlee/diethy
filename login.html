@@ -278,7 +278,7 @@
       </button>
     </form>
 
-    <div class="quick-login">
+    <div class="quick-login" style="display: none;">
       <h4>🎯 데모 모드로 체험하기</h4>
       <button class="demo-btn" onclick="demoLogin()">
         ✨ 데모 계정으로 바로 시작하기
@@ -352,89 +352,6 @@
       }
     }
 
-    window.demoLogin = function() {
-      if (!localStorage.getItem('workoutLogs')) {
-        const demoData = generateDemoWorkoutData();
-        localStorage.setItem('workoutLogs', JSON.stringify(demoData));
-      }
-      
-      if (!localStorage.getItem('fitnessGoals')) {
-        const demoGoals = generateDemoGoals();
-        localStorage.setItem('fitnessGoals', JSON.stringify(demoGoals));
-      }
-
-      showSuccessMessage("✅ 데모 모드로 로그인되었습니다!");
-      setTimeout(() => {
-        window.location.href = "workout-admin.html";
-      }, 1500);
-    };
-
-    function generateDemoWorkoutData() {
-      const workoutTypes = ['유산소', '근력', '요가', '스트레칭', '수영', '사이클'];
-      const intensities = ['낮음', '보통', '높음', '매우높음'];
-      const demoData = [];
-      
-      for (let i = 0; i < 30; i++) {
-        const date = new Date();
-        date.setDate(date.getDate() - i * 2);
-        
-        const type = workoutTypes[Math.floor(Math.random() * workoutTypes.length)];
-        const duration = 30 + Math.floor(Math.random() * 90);
-        const intensity = intensities[Math.floor(Math.random() * intensities.length)];
-        
-        const baseWeight = 70;
-        const weightTrend = -0.1 * i;
-        const baseBodyFat = 25;
-        const fatTrend = -0.15 * i;
-        const baseMuscle = 42;
-        const muscleTrend = 0.05 * i;
-        
-        demoData.push({
-          id: `demo_${i}`,
-          date: date.toISOString().slice(0, 10),
-          weight: Math.max(50, baseWeight + weightTrend + (Math.random() - 0.5) * 2),
-          bodyFat: Math.max(10, Math.min(35, baseBodyFat + fatTrend + (Math.random() - 0.5) * 1)),
-          muscleMass: Math.max(30, baseMuscle + muscleTrend + (Math.random() - 0.5) * 0.5),
-          workoutTypes: type,
-          duration: duration,
-          intensity: intensity,
-          workoutDetails: `${type} 운동 ${duration}분 진행. ${intensity} 강도로 실시했습니다.`,
-          notes: `${i + 1}일차 운동 완료! 오늘 컨디션이 좋았습니다.`,
-          timestamp: date.toISOString()
-        });
-      }
-      return demoData;
-    }
-
-    function generateDemoGoals() {
-      return [
-        {
-          id: 'demo_goal_1',
-          type: 'weight',
-          name: '여름까지 5kg 감량',
-          period: 90,
-          currentValue: 70,
-          targetValue: 65,
-          description: '건강한 다이어트로 목표 체중 달성하기',
-          createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-          deadline: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
-          completed: false
-        },
-        {
-          id: 'demo_goal_2',
-          type: 'bodyfat',
-          name: '체지방률 20% 달성',
-          period: 120,
-          currentValue: 25,
-          targetValue: 20,
-          description: '꾸준한 운동으로 체지방 감소',
-          createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
-          deadline: new Date(Date.now() + 100 * 24 * 60 * 60 * 1000).toISOString(),
-          completed: false
-        }
-      ];
-    }
-
     function showSuccessMessage(message) {
       const successDiv = document.createElement('div');
       successDiv.style.cssText = `
@@ -479,7 +396,7 @@
         await signInWithEmailAndPassword(auth, email, password);
         showSuccessMessage("✅ 로그인 성공!");
         setTimeout(() => {
-          window.location.href = "workout-admin.html";
+          window.location.href = "admin.html";
         }, 1000);
       } catch (error) {
         console.error("로그인 실패:", error);
