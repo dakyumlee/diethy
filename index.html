@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>현영이의 피트니스 관리</title>
+  <title>현숙이의 피트니스 관리</title>
   <style>
     @font-face {
     font-family: 'SBAggroB';
@@ -240,7 +240,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>💪 현영이의 피트니스</h1>
+    <h1>💪 현영이의 피트니스 관리</h1>
     
     <div class="welcome-box">
       <h2>🏋️‍♀️ 건강한 몸을 만들어가는 여정</h2>
@@ -280,12 +280,12 @@
           <p>지금까지의 모든 운동 기록을 타임라인으로 확인하세요</p>
         </a>
         
-        <a href="goal-tracker.html" class="feature-item">
+        <!-- <a href="goal-tracker.html" class="feature-item">
           <div class="feature-icon">🎯</div>
           <h3>목표 관리</h3>
           <p>운동 목표를 설정하고 달성률을 추적해보세요</p>
         </a>
-      </div>
+      </div> -->
     </div>
 
     <div class="nav-links">
@@ -334,7 +334,7 @@
         const totalWorkouts = logs.length;
         const latestLog = logs.find(log => log.weight > 0);
         const currentWeight = latestLog ? latestLog.weight.toFixed(1) + "kg" : "-";
-
+        
         const latestBodyFatLog = logs.find(log => log.bodyFat > 0);
         const bodyFatRate = latestBodyFatLog ? latestBodyFatLog.bodyFat.toFixed(1) + "%" : "-";
 
